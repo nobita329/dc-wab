@@ -326,6 +326,101 @@ const commandMigrations: Migration[] = [
   },
 ];
 
+const botMigrations: Migration[] = [
+  {
+    version: 1,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS bot_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL,
+          updated_at TEXT NOT NULL,
+          updated_by TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS guild_configs (
+          guild_id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          icon_url TEXT,
+          default_channel_id TEXT,
+          log_channel_id TEXT,
+          welcome_channel_id TEXT,
+          welcome_message TEXT,
+          welcome_template_id TEXT,
+          allowed_roles TEXT DEFAULT '[]',
+          updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS components_v2_templates (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT NOT NULL,
+          category TEXT NOT NULL,
+          is_preset INTEGER NOT NULL DEFAULT 0,
+          payload_json TEXT NOT NULL,
+          tags TEXT DEFAULT '[]',
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_v2_tpl_cat ON components_v2_templates(category);
+
+        CREATE TABLE IF NOT EXISTS bot_published_messages (
+          id TEXT PRIMARY KEY,
+          guild_id TEXT NOT NULL,
+          guild_name TEXT,
+          channel_id TEXT NOT NULL,
+          channel_name TEXT,
+          message_id TEXT NOT NULL,
+          template_id TEXT,
+          template_name TEXT,
+          payload_json TEXT NOT NULL,
+          status TEXT NOT NULL,
+          error TEXT,
+          published_by TEXT NOT NULL,
+          published_at TEXT NOT NULL,
+          updated_at TEXT
+        );
+        CREATE INDEX IF NOT EXISTS idx_bot_pub_guild ON bot_published_messages(guild_id);
+        CREATE INDEX IF NOT EXISTS idx_bot_pub_channel ON bot_published_messages(channel_id);
+
+        CREATE TABLE IF NOT EXISTS bot_interaction_logs (
+          id TEXT PRIMARY KEY,
+          interaction_id TEXT NOT NULL,
+          type TEXT NOT NULL,
+          user_id TEXT NOT NULL,
+          username TEXT NOT NULL,
+          avatar_url TEXT,
+          guild_id TEXT,
+          guild_name TEXT,
+          channel_id TEXT,
+          channel_name TEXT,
+          custom_id TEXT,
+          selected_values TEXT,
+          modal_inputs TEXT,
+          command_name TEXT,
+          status TEXT NOT NULL,
+          latency_ms INTEGER NOT NULL,
+          created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_bot_log_type ON bot_interaction_logs(type);
+        CREATE INDEX IF NOT EXISTS idx_bot_log_created ON bot_interaction_logs(created_at);
+
+        CREATE TABLE IF NOT EXISTS bot_slash_commands (
+          id TEXT PRIMARY KEY,
+          name TEXT UNIQUE NOT NULL,
+          description TEXT NOT NULL,
+          category TEXT NOT NULL,
+          enabled INTEGER NOT NULL DEFAULT 1,
+          options TEXT DEFAULT '[]',
+          default_member_permissions TEXT,
+          template_id_to_trigger TEXT,
+          updated_at TEXT NOT NULL
+        );
+      `);
+    },
+  },
+];
+
 const migrationsMap: Record<DatabaseKey, Migration[]> = {
   user: userMigrations,
   app: appMigrations,
@@ -336,6 +431,7 @@ const migrationsMap: Record<DatabaseKey, Migration[]> = {
   team: teamMigrations,
   tutorials: tutorialMigrations,
   command: commandMigrations,
+  bot: botMigrations,
 };
 
 export function runMigrations(): void {

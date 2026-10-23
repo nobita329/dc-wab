@@ -1103,10 +1103,745 @@ export type WsEventType =
   | "database_backed_up"
   | "database_restored"
   | "activity_logged"
-  | "health_status";
+  | "health_status"
+  | "bot_message_published"
+  | "bot_interaction_received"
+  | "bot_settings_updated"
+  | "bot_template_updated";
 
 export interface WsMessage<T = any> {
   type: WsEventType;
   payload: T;
   timestamp: string;
 }
+
+// ==========================================
+// Discord Components V2 System & Bot Types
+// ==========================================
+
+export enum DiscordComponentType {
+  ACTION_ROW = 1,
+  BUTTON = 2,
+  STRING_SELECT = 3,
+  TEXT_INPUT = 4,
+  USER_SELECT = 5,
+  ROLE_SELECT = 6,
+  MENTIONABLE_SELECT = 7,
+  CHANNEL_SELECT = 8,
+  SECTION = 9,
+  TEXT_DISPLAY = 10,
+  THUMBNAIL = 11,
+  MEDIA_GALLERY = 12,
+  FILE = 13,
+  SEPARATOR = 14,
+  CONTAINER = 15,
+}
+
+export enum DiscordButtonStyle {
+  PRIMARY = 1,    // Blurple / Indigo
+  SECONDARY = 2,  // Neutral / Grey
+  SUCCESS = 3,    // Green
+  DANGER = 4,     // Red
+  LINK = 5,       // Grey with external link icon
+  PREMIUM = 6,
+}
+
+export enum DiscordSeparatorSpacing {
+  SMALL = 1,
+  MEDIUM = 2,
+  LARGE = 3,
+}
+
+export const DISCORD_MESSAGE_FLAGS = {
+  CROSSPOSTED: 1 << 0,
+  IS_CROSSPOST: 1 << 1,
+  SUPPRESS_EMBEDS: 1 << 2,
+  SOURCE_MESSAGE_DELETED: 1 << 3,
+  URGENT: 1 << 4,
+  HAS_THREAD: 1 << 5,
+  EPHEMERAL: 1 << 6,
+  LOADING: 1 << 7,
+  FAILED_TO_MENTION_SOME_ROLES_IN_THREAD: 1 << 8,
+  SUPPRESS_NOTIFICATIONS: 1 << 12,
+  IS_VOICE_MESSAGE: 1 << 13,
+  IS_COMPONENTS_V2: 1 << 15, // 32768
+} as const;
+
+export interface DiscordMediaItem {
+  url: string;
+  description?: string;
+  spoiler?: boolean;
+}
+
+export interface DiscordTextDisplayComponent {
+  id?: string;
+  type: DiscordComponentType.TEXT_DISPLAY | 10;
+  content: string;
+}
+
+export interface DiscordThumbnailComponent {
+  id?: string;
+  type: DiscordComponentType.THUMBNAIL | 11;
+  media: DiscordMediaItem;
+}
+
+export interface DiscordMediaGalleryComponent {
+  id?: string;
+  type: DiscordComponentType.MEDIA_GALLERY | 12;
+  items: { media: DiscordMediaItem }[];
+}
+
+export interface DiscordFileComponent {
+  id?: string;
+  type: DiscordComponentType.FILE | 13;
+  file: {
+    url: string;
+    filename?: string;
+    size?: number;
+    mime_type?: string;
+  };
+}
+
+export interface DiscordSeparatorComponent {
+  id?: string;
+  type: DiscordComponentType.SEPARATOR | 14;
+  divider?: boolean;
+  spacing?: DiscordSeparatorSpacing | number;
+}
+
+export interface DiscordButtonComponent {
+  id?: string;
+  type: DiscordComponentType.BUTTON | 2;
+  style: DiscordButtonStyle | number;
+  label?: string;
+  emoji?: {
+    id?: string;
+    name: string;
+    animated?: boolean;
+  };
+  custom_id?: string;
+  url?: string;
+  disabled?: boolean;
+}
+
+export interface DiscordSelectOption {
+  label: string;
+  value: string;
+  description?: string;
+  emoji?: {
+    id?: string;
+    name: string;
+    animated?: boolean;
+  };
+  default?: boolean;
+}
+
+export interface DiscordSelectComponent {
+  id?: string;
+  type:
+    | DiscordComponentType.STRING_SELECT
+    | DiscordComponentType.USER_SELECT
+    | DiscordComponentType.ROLE_SELECT
+    | DiscordComponentType.MENTIONABLE_SELECT
+    | DiscordComponentType.CHANNEL_SELECT
+    | 3
+    | 5
+    | 6
+    | 7
+    | 8;
+  custom_id: string;
+  placeholder?: string;
+  min_values?: number;
+  max_values?: number;
+  disabled?: boolean;
+  options?: DiscordSelectOption[];
+  channel_types?: number[];
+}
+
+export interface DiscordTextInputComponent {
+  id?: string;
+  type: DiscordComponentType.TEXT_INPUT | 4;
+  custom_id: string;
+  style: 1 | 2; // 1: Short, 2: Paragraph
+  label: string;
+  min_length?: number;
+  max_length?: number;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+}
+
+export interface DiscordSectionComponent {
+  id?: string;
+  type: DiscordComponentType.SECTION | 9;
+  components: DiscordTextDisplayComponent[];
+  accessory?: DiscordButtonComponent | DiscordThumbnailComponent;
+}
+
+export interface DiscordActionRowComponent {
+  id?: string;
+  type: DiscordComponentType.ACTION_ROW | 1;
+  components: (DiscordButtonComponent | DiscordSelectComponent)[];
+}
+
+export interface DiscordContainerComponent {
+  id?: string;
+  type: DiscordComponentType.CONTAINER | 15;
+  accent_color?: number; // Integer color e.g. 0x7c3aed (8141549)
+  spoiler?: boolean;
+  components: (
+    | DiscordSectionComponent
+    | DiscordTextDisplayComponent
+    | DiscordActionRowComponent
+    | DiscordSeparatorComponent
+    | DiscordMediaGalleryComponent
+    | DiscordFileComponent
+  )[];
+}
+
+export type DiscordTopLevelComponent =
+  | DiscordContainerComponent
+  | DiscordSectionComponent
+  | DiscordTextDisplayComponent
+  | DiscordSeparatorComponent
+  | DiscordMediaGalleryComponent
+  | DiscordFileComponent
+  | DiscordActionRowComponent;
+
+export type AnyDiscordComponent =
+  | DiscordTopLevelComponent
+  | DiscordButtonComponent
+  | DiscordSelectComponent
+  | DiscordThumbnailComponent
+  | DiscordTextInputComponent;
+
+export interface DiscordMessagePayload {
+  content?: string;
+  flags?: number; // IS_COMPONENTS_V2 (32768)
+  components?: DiscordTopLevelComponent[];
+  allowed_mentions?: {
+    parse?: ("roles" | "users" | "everyone")[];
+  };
+}
+
+// ==========================================
+// Bot Settings Interfaces
+// ==========================================
+
+export interface BotBrandingSettings {
+  botName: string;
+  avatarUrl: string;
+  bannerUrl: string;
+  tagline: string;
+  description: string;
+  defaultAccentColor: string; // Hex string e.g. "#7c3aed"
+  footerText: string;
+  status: "online" | "idle" | "dnd" | "invisible";
+  activityType: "Playing" | "Streaming" | "Listening" | "Watching" | "Competing" | "Custom";
+  activityText: string;
+  showWebsiteBadge: boolean;
+  syncDiscordProfile: boolean;
+}
+
+export interface BotServerSettings {
+  botTokenConfigured: boolean;
+  selectedGuildId: string;
+  announcementChannelId: string;
+  logChannelId: string;
+  welcomeChannelId: string;
+  welcomeEnabled: boolean;
+  welcomeTemplateId?: string;
+  goodbyeEnabled: boolean;
+  goodbyeChannelId: string;
+  allowedRoleIds: string[];
+  commandPrefix: string;
+}
+
+export interface BotSeoSettings {
+  metaTitle: string;
+  metaDescription: string;
+  canonicalUrl: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImageUrl: string;
+  themeColor: string;
+  robotsIndex: string;
+}
+
+export interface BotFeatureSettings {
+  enableComponentsV2Builder: boolean;
+  enableMessageTemplates: boolean;
+  enableEmbedMigration: boolean;
+  enableInteractiveButtons: boolean;
+  enableSelectMenus: boolean;
+  enableModals: boolean;
+  allowGuildAdminsOnly: boolean;
+  enableLiveInteractionLogger: boolean;
+  enableAutoWelcomeMessages: boolean;
+  defaultTemplateId: string;
+}
+
+export interface BotSettings {
+  branding: BotBrandingSettings;
+  server: BotServerSettings;
+  seo: BotSeoSettings;
+  features: BotFeatureSettings;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+// ==========================================
+// Guild & Channel Interfaces
+// ==========================================
+
+export interface DiscordGuildInfo {
+  id: string;
+  name: string;
+  icon: string | null;
+  iconUrl?: string;
+  owner: boolean;
+  permissions: string;
+  features: string[];
+  approximate_member_count?: number;
+  approximate_presence_count?: number;
+  botPresent?: boolean;
+}
+
+export interface DiscordChannelInfo {
+  id: string;
+  name: string;
+  type: number; // 0: GUILD_TEXT, 2: GUILD_VOICE, 4: GUILD_CATEGORY, 5: GUILD_ANNOUNCEMENT
+  position: number;
+  parent_id?: string | null;
+  topic?: string | null;
+  botCanSend?: boolean;
+}
+
+export interface GuildConfig {
+  guildId: string;
+  name: string;
+  iconUrl?: string;
+  defaultChannelId?: string;
+  logChannelId?: string;
+  welcomeChannelId?: string;
+  welcomeMessage?: string;
+  welcomeTemplateId?: string;
+  allowedRoles?: string[];
+  updatedAt: string;
+}
+
+// ==========================================
+// Template, Publish & Interaction Interfaces
+// ==========================================
+
+export interface ComponentsV2Template {
+  id: string;
+  name: string;
+  description: string;
+  category: "announcements" | "rules" | "welcome" | "verification" | "status" | "roles" | "custom";
+  isPreset: boolean;
+  payload: DiscordMessagePayload;
+  createdAt: string;
+  updatedAt: string;
+  tags?: string[];
+}
+
+export interface PublishedBotMessage {
+  id: string;
+  guildId: string;
+  guildName?: string;
+  channelId: string;
+  channelName?: string;
+  messageId: string;
+  templateId?: string;
+  templateName?: string;
+  payload: DiscordMessagePayload;
+  status: "sent" | "edited" | "deleted" | "failed";
+  error?: string;
+  publishedBy: string;
+  publishedAt: string;
+  updatedAt?: string;
+}
+
+export interface BotInteractionLog {
+  id: string;
+  interactionId: string;
+  type: "button_click" | "select_option" | "modal_submit" | "slash_command";
+  userId: string;
+  username: string;
+  avatarUrl?: string;
+  guildId?: string;
+  guildName?: string;
+  channelId?: string;
+  channelName?: string;
+  customId: string;
+  selectedValues?: string[];
+  modalInputs?: Record<string, string>;
+  commandName?: string;
+  status: "success" | "warning" | "error";
+  latencyMs: number;
+  createdAt: string;
+}
+
+export interface BotSlashCommand {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  enabled: boolean;
+  options?: {
+    name: string;
+    description: string;
+    type: number;
+    required?: boolean;
+  }[];
+  defaultMemberPermissions?: string;
+  templateIdToTrigger?: string;
+  updatedAt: string;
+}
+
+export interface BotDashboardSummary {
+  botConnected: boolean;
+  botUser: {
+    id: string;
+    username: string;
+    discriminator: string;
+    avatarUrl: string;
+    tag: string;
+  } | null;
+  guildsCount: number;
+  totalMembers: number;
+  templatesCount: number;
+  publishedMessagesCount: number;
+  recentInteractionsCount: number;
+  botStatus: "online" | "idle" | "dnd" | "invisible";
+  activity: string;
+  latencyMs: number;
+  recentPublished: PublishedBotMessage[];
+  recentInteractions: BotInteractionLog[];
+}
+
+// ==========================================
+// Default Bot Settings & Presets
+// ==========================================
+
+export const DEFAULT_BOT_SETTINGS: BotSettings = {
+  branding: {
+    botName: "Nova Assistant",
+    avatarUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=256",
+    bannerUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200",
+    tagline: "Elite Discord System Bot & Interactive Components V2 Agent",
+    description: "Modular Discord bot system delivering ultra-rich interactive messages, automated workflows, and high-performance server tooling.",
+    defaultAccentColor: "#7c3aed",
+    footerText: "Powered by Nova Studio • Components V2 Engine",
+    status: "online",
+    activityType: "Playing",
+    activityText: "with Discord Components V2",
+    showWebsiteBadge: true,
+    syncDiscordProfile: false,
+  },
+  server: {
+    botTokenConfigured: false,
+    selectedGuildId: "1540761150797389915",
+    announcementChannelId: "1558058866883821674",
+    logChannelId: "1558058854523215985",
+    welcomeChannelId: "1558058866883821674",
+    welcomeEnabled: true,
+    welcomeTemplateId: "tpl-welcome-verify",
+    goodbyeEnabled: false,
+    goodbyeChannelId: "",
+    allowedRoleIds: ["1540761150797389916"],
+    commandPrefix: "!",
+  },
+  seo: {
+    metaTitle: "Nova Bot — Next-Gen Discord Components V2 Studio",
+    metaDescription: "Visual drag-and-drop Discord Components V2 builder. Create rich containers, sections, galleries, and interactive buttons for Discord.",
+    canonicalUrl: "",
+    ogTitle: "Nova Bot — Next-Gen Discord Components V2 Studio",
+    ogDescription: "Visual Discord Components V2 builder with real-time live preview and 1-click publishing.",
+    ogImageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
+    themeColor: "#7c3aed",
+    robotsIndex: "index, follow",
+  },
+  features: {
+    enableComponentsV2Builder: true,
+    enableMessageTemplates: true,
+    enableEmbedMigration: true,
+    enableInteractiveButtons: true,
+    enableSelectMenus: true,
+    enableModals: true,
+    allowGuildAdminsOnly: true,
+    enableLiveInteractionLogger: true,
+    enableAutoWelcomeMessages: true,
+    defaultTemplateId: "tpl-welcome-verify",
+  },
+  updatedAt: new Date().toISOString(),
+  updatedBy: "system",
+};
+
+export const COMPONENTS_V2_PRESET_TEMPLATES: ComponentsV2Template[] = [
+  {
+    id: "tpl-welcome-verify",
+    name: "Server Welcome & Verification Gate",
+    description: "Rich welcome banner with guidelines, rules agreement, and 1-click verification button.",
+    category: "welcome",
+    isPreset: true,
+    tags: ["welcome", "verification", "onboarding"],
+    createdAt: "2026-10-23T00:00:00.000Z",
+    updatedAt: "2026-10-23T00:00:00.000Z",
+    payload: {
+      flags: DISCORD_MESSAGE_FLAGS.IS_COMPONENTS_V2,
+      components: [
+        {
+          type: DiscordComponentType.CONTAINER,
+          accent_color: 0x7c3aed,
+          components: [
+            {
+              type: DiscordComponentType.SECTION,
+              components: [
+                {
+                  type: DiscordComponentType.TEXT_DISPLAY,
+                  content: "### 🚀 Welcome to Nova Studio Discord!\nWe build elite open-source developer tools, cloud infrastructure, and immersive digital platforms.",
+                },
+              ],
+              accessory: {
+                type: DiscordComponentType.THUMBNAIL,
+                media: {
+                  url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=300",
+                  description: "Nova Studio Logo",
+                },
+              },
+            },
+            {
+              type: DiscordComponentType.SEPARATOR,
+              divider: true,
+              spacing: DiscordSeparatorSpacing.SMALL,
+            },
+            {
+              type: DiscordComponentType.TEXT_DISPLAY,
+              content: "**Verification Steps:**\n1. Review the community guidelines in <#rules>\n2. Respect moderators and maintain developer etiquette\n3. Click **Verify & Enter** below to unlock all channels!",
+            },
+            {
+              type: DiscordComponentType.ACTION_ROW,
+              components: [
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.SUCCESS,
+                  label: "Verify & Enter",
+                  custom_id: "btn_verify_member",
+                  emoji: { name: "✅" },
+                },
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.SECONDARY,
+                  label: "Read Rules",
+                  custom_id: "btn_read_rules",
+                  emoji: { name: "📜" },
+                },
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.LINK,
+                  label: "Official Website",
+                  url: "https://novastudio.dev",
+                  emoji: { name: "🌐" },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: "tpl-server-status",
+    name: "System Status & Service Health",
+    description: "Live cluster health monitor with status indicators, database checks, and refresh action.",
+    category: "status",
+    isPreset: true,
+    tags: ["status", "system", "health", "uptime"],
+    createdAt: "2026-10-23T00:00:00.000Z",
+    updatedAt: "2026-10-23T00:00:00.000Z",
+    payload: {
+      flags: DISCORD_MESSAGE_FLAGS.IS_COMPONENTS_V2,
+      components: [
+        {
+          type: DiscordComponentType.CONTAINER,
+          accent_color: 0x10b981,
+          components: [
+            {
+              type: DiscordComponentType.SECTION,
+              components: [
+                {
+                  type: DiscordComponentType.TEXT_DISPLAY,
+                  content: "### 🟢 All Systems Operational — Nova Infrastructure\nReal-time monitoring across API microservices, SQLite WAL databases, and Next.js frontend edge.",
+                },
+              ],
+            },
+            {
+              type: DiscordComponentType.SEPARATOR,
+              divider: true,
+              spacing: DiscordSeparatorSpacing.SMALL,
+            },
+            {
+              type: DiscordComponentType.TEXT_DISPLAY,
+              content: "```yaml\nGateway Latency: 24ms\nDatabase Cluster: Healthy (9 / 9 Online)\nMemory Allocated: 236 MB / 1024 MB\nUptime: 99.98%\n```",
+            },
+            {
+              type: DiscordComponentType.ACTION_ROW,
+              components: [
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.PRIMARY,
+                  label: "Refresh Status",
+                  custom_id: "btn_refresh_status",
+                  emoji: { name: "🔄" },
+                },
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.LINK,
+                  label: "System Metrics",
+                  url: "https://status.novastudio.dev",
+                  emoji: { name: "📊" },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: "tpl-role-selector",
+    name: "Notification & Role Assignment Menu",
+    description: "Interactive role picker allowing members to select their developer roles and notification preferences.",
+    category: "roles",
+    isPreset: true,
+    tags: ["roles", "selection", "notifications"],
+    createdAt: "2026-10-23T00:00:00.000Z",
+    updatedAt: "2026-10-23T00:00:00.000Z",
+    payload: {
+      flags: DISCORD_MESSAGE_FLAGS.IS_COMPONENTS_V2,
+      components: [
+        {
+          type: DiscordComponentType.CONTAINER,
+          accent_color: 0x06b6d4,
+          components: [
+            {
+              type: DiscordComponentType.TEXT_DISPLAY,
+              content: "### 🎭 Choose Your Developer Roles & Alerts\nSelect the stacks you develop in to get pinged for releases, beta access, and technical discussions.",
+            },
+            {
+              type: DiscordComponentType.SEPARATOR,
+              divider: false,
+              spacing: DiscordSeparatorSpacing.SMALL,
+            },
+            {
+              type: DiscordComponentType.ACTION_ROW,
+              components: [
+                {
+                  type: DiscordComponentType.STRING_SELECT,
+                  custom_id: "select_dev_roles",
+                  placeholder: "Choose your primary tech stack roles...",
+                  min_values: 1,
+                  max_values: 4,
+                  options: [
+                    {
+                      label: "Full Stack Engineer",
+                      value: "role_fullstack",
+                      description: "React, Next.js, Node.js & SQLite systems",
+                      emoji: { name: "⚡" },
+                    },
+                    {
+                      label: "Discord Bot Architect",
+                      value: "role_bot_dev",
+                      description: "Discord API, Components V2 & Gateway WebSockets",
+                      emoji: { name: "🤖" },
+                    },
+                    {
+                      label: "DevOps & Cloud",
+                      value: "role_devops",
+                      description: "Docker, Linux VPS, Pterodactyl & CI/CD",
+                      emoji: { name: "☁️" },
+                    },
+                    {
+                      label: "UI/UX Designer",
+                      value: "role_designer",
+                      description: "Design systems, Glassmorphism & KaTeX typography",
+                      emoji: { name: "🎨" },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: "tpl-product-showcase",
+    name: "Media Showcase & Feature Release",
+    description: "Media gallery component with rich changelog sections and feedback buttons.",
+    category: "announcements",
+    isPreset: true,
+    tags: ["showcase", "gallery", "media", "release"],
+    createdAt: "2026-10-23T00:00:00.000Z",
+    updatedAt: "2026-10-23T00:00:00.000Z",
+    payload: {
+      flags: DISCORD_MESSAGE_FLAGS.IS_COMPONENTS_V2,
+      components: [
+        {
+          type: DiscordComponentType.CONTAINER,
+          accent_color: 0xf43f5e,
+          components: [
+            {
+              type: DiscordComponentType.TEXT_DISPLAY,
+              content: "### 💎 Major Update: Nova Studio 2.0 Released!\nWe're thrilled to introduce Discord Components V2 visual building, live 4K wallpapers, and instant message deployment.",
+            },
+            {
+              type: DiscordComponentType.MEDIA_GALLERY,
+              items: [
+                {
+                  media: {
+                    url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800",
+                    description: "Nova Studio Glassmorphism Dashboard",
+                  },
+                },
+                {
+                  media: {
+                    url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800",
+                    description: "Discord Components V2 Live Preview",
+                  },
+                },
+              ],
+            },
+            {
+              type: DiscordComponentType.SEPARATOR,
+              divider: true,
+              spacing: DiscordSeparatorSpacing.SMALL,
+            },
+            {
+              type: DiscordComponentType.ACTION_ROW,
+              components: [
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.PRIMARY,
+                  label: "Read Changelog",
+                  custom_id: "btn_view_changelog",
+                  emoji: { name: "📖" },
+                },
+                {
+                  type: DiscordComponentType.BUTTON,
+                  style: DiscordButtonStyle.SUCCESS,
+                  label: "Claim Contributor Badge",
+                  custom_id: "btn_claim_badge",
+                  emoji: { name: "🏆" },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+];

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseInfo } from "@nova/shared";
 
-export type DatabaseKey = "user" | "app" | "settings" | "content" | "activity" | "api" | "team" | "tutorials" | "command";
+export type DatabaseKey = "user" | "app" | "settings" | "content" | "activity" | "api" | "team" | "tutorials" | "command" | "bot";
 
 export const DB_NAMES: Record<DatabaseKey, string> = {
   user: "user.db",
@@ -15,6 +15,7 @@ export const DB_NAMES: Record<DatabaseKey, string> = {
   team: "team.db",
   tutorials: "tutorials.db",
   command: "command.db",
+  bot: "bot.db",
 };
 
 export class DatabaseManager {

@@ -24,6 +24,7 @@ import { teamRoutes } from "./routes/teamRoutes.js";
 import { tutorialRoutes } from "./routes/tutorialRoutes.js";
 import { commandRoutes } from "./routes/commandRoutes.js";
 import { wallpaperRoutes } from "./routes/wallpaperRoutes.js";
+import botRoutes from "./routes/botRoutes.js";
 
 dotenv.config();
 
@@ -68,6 +69,7 @@ app.use("/api", teamRoutes);
 app.use("/api", tutorialRoutes);
 app.use("/api", commandRoutes);
 app.use("/api", wallpaperRoutes);
+app.use("/api", botRoutes);
 
 // 404 handler for API routes
 app.use("/api/*", (req, res) => {
