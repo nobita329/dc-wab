@@ -6,6 +6,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Toaster } from "sonner";
 import { useEffect } from "react";
 import { useAuthStore, useThemeStore } from "@/lib/store";
+import { GlobalAppShell } from "@/components/layout/GlobalAppShell";
 
 export default function RootLayout({
   children,
@@ -39,7 +40,9 @@ export default function RootLayout({
       </head>
       <body className="bg-zinc-950 text-zinc-100 antialiased min-h-screen">
         <QueryClientProvider client={queryClient}>
-          {children}
+          <GlobalAppShell>
+            {children}
+          </GlobalAppShell>
           <Toaster
             theme={theme === "light" ? "light" : "dark"}
             position="bottom-right"

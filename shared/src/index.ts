@@ -44,12 +44,24 @@ export interface BrandingSettings {
   fontFamily: string;
   borderRadius: string;
   defaultTheme: "dark" | "light" | "system";
+  // Panel Customization & Identity
+  panelName?: string;
+  panelLogo?: string;
+  panelFaviconName?: string;
+  panelFaviconLogo?: string;
+  panelMotd?: string;
+  panelMotdEnabled?: boolean;
+  panelMotdImage?: string;
+  panelMotdLink?: string;
+  // Panel Background & Glassmorphism
   backgroundType?: "color" | "image" | "video";
   backgroundUrl?: string;
   backgroundOpacity?: number;
   panelTransparency?: number;
   panelBlur?: number;
   favoriteWallpapers?: string[];
+  glassTint?: string;
+  enablePublicBackground?: boolean;
 }
 
 export interface SeoSettings {
@@ -87,12 +99,24 @@ export const BrandingSettingsSchema = z.object({
   fontFamily: z.string(),
   borderRadius: z.string(),
   defaultTheme: z.enum(["dark", "light", "system"]),
+  // Panel Customization
+  panelName: z.string().default("").optional(),
+  panelLogo: z.string().default("").optional(),
+  panelFaviconName: z.string().default("").optional(),
+  panelFaviconLogo: z.string().default("").optional(),
+  panelMotd: z.string().default("").optional(),
+  panelMotdEnabled: z.boolean().default(true).optional(),
+  panelMotdImage: z.string().default("").optional(),
+  panelMotdLink: z.string().default("").optional(),
+  // Panel Background & Glassmorphism
   backgroundType: z.enum(["color", "image", "video"]).default("image").optional(),
   backgroundUrl: z.string().default("").optional(),
   backgroundOpacity: z.number().min(0).max(100).default(100).optional(),
   panelTransparency: z.number().min(0).max(100).default(35).optional(),
   panelBlur: z.number().min(0).max(40).default(16).optional(),
   favoriteWallpapers: z.array(z.string()).default([]).optional(),
+  glassTint: z.string().default("#12111a").optional(),
+  enablePublicBackground: z.boolean().default(true).optional(),
 });
 
 // ==========================================

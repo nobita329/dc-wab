@@ -17,6 +17,39 @@ export class SettingsRepository {
 
     const parsed = JSON.parse(row.data) as SiteSettings;
     if (parsed.branding) {
+      parsed.branding.panelName =
+        parsed.branding.panelName !== undefined
+          ? parsed.branding.panelName
+          : parsed.branding.siteTitle || "NOVA STUDIO";
+      parsed.branding.panelLogo =
+        parsed.branding.panelLogo !== undefined
+          ? parsed.branding.panelLogo
+          : parsed.branding.logoImageUrl || "";
+      parsed.branding.panelFaviconName =
+        parsed.branding.panelFaviconName !== undefined
+          ? parsed.branding.panelFaviconName
+          : parsed.branding.siteTitle || "Nova Panel";
+      parsed.branding.panelFaviconLogo =
+        parsed.branding.panelFaviconLogo !== undefined
+          ? parsed.branding.panelFaviconLogo
+          : parsed.branding.faviconUrl || "/favicon.ico";
+      parsed.branding.panelMotd =
+        parsed.branding.panelMotd !== undefined
+          ? parsed.branding.panelMotd
+          : "Welcome to Nova Studio — Elite Engineering & Creative System";
+      parsed.branding.panelMotdEnabled =
+        parsed.branding.panelMotdEnabled !== undefined ? parsed.branding.panelMotdEnabled : true;
+      parsed.branding.panelMotdImage =
+        parsed.branding.panelMotdImage !== undefined ? parsed.branding.panelMotdImage : "";
+      parsed.branding.panelMotdLink =
+        parsed.branding.panelMotdLink !== undefined ? parsed.branding.panelMotdLink : "";
+      parsed.branding.glassTint =
+        parsed.branding.glassTint !== undefined ? parsed.branding.glassTint : "#12111a";
+      parsed.branding.enablePublicBackground =
+        parsed.branding.enablePublicBackground !== undefined
+          ? parsed.branding.enablePublicBackground
+          : true;
+
       parsed.branding.backgroundType = parsed.branding.backgroundType || "image";
       parsed.branding.backgroundUrl =
         parsed.branding.backgroundUrl !== undefined

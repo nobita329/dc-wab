@@ -78,3 +78,4 @@ jobs:
           gh release create "${{ steps.versioning.outputs.tag }}" \
             --title "Release ${{ steps.versioning.outputs.tag }}" \
             --generate-notes
+

@@ -20,6 +20,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuthStore, useWsStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { SiteSettings } from "@nova/shared";
 
 const navItems = [
   {
@@ -74,25 +77,56 @@ export function AdminSidebar() {
   const { user, logout } = useAuthStore();
   const { isConnected } = useWsStore();
 
+  const { data: settingsData } = useQuery<{ success: boolean; settings: SiteSettings }>({
+    queryKey: ["siteSettings"],
+    queryFn: async () => (await api.get("/api/settings")).data,
+  });
+
+  const branding = settingsData?.settings?.branding;
+  const panelName = branding?.panelName || branding?.logoText || "NOVA STUDIO";
+  const panelLogo = branding?.panelLogo || branding?.logoImageUrl;
+  const panelFaviconName = branding?.panelFaviconName || "Admin Area";
+  const panelMotd = branding?.panelMotd;
+  const panelMotdEnabled = branding?.panelMotdEnabled !== false;
+
   return (
     <aside className="w-64 border-r border-white/5 bg-zinc-950/75 backdrop-blur-md flex flex-col justify-between h-screen sticky top-0 z-20">
       <div>
         {/* Brand header */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-white/5">
-          <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 shadow-md shadow-violet-500/20">
-              <span className="font-extrabold text-white text-sm">N</span>
-            </div>
+          <Link href="/admin" className="flex items-center gap-2.5 group">
+            {panelLogo ? (
+              <img
+                src={panelLogo}
+                alt={panelName}
+                className="h-8 w-8 rounded-lg object-cover shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform border border-white/10"
+              />
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
+                <span className="font-extrabold text-white text-sm">
+                  {panelName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
             <div>
-              <span className="text-sm font-bold text-white tracking-wide">
-                NOVA STUDIO
+              <span className="text-sm font-bold text-white tracking-wide block truncate max-w-[150px]">
+                {panelName}
               </span>
-              <span className="block text-[10px] uppercase font-semibold text-violet-400 tracking-wider">
-                Admin Area
+              <span className="block text-[10px] uppercase font-semibold text-violet-400 tracking-wider truncate max-w-[150px]">
+                {panelFaviconName}
               </span>
             </div>
           </Link>
         </div>
+
+        {/* MOTD Pill (if enabled) */}
+        {panelMotdEnabled && panelMotd && (
+          <div className="px-4 py-2 border-b border-violet-500/10 bg-violet-950/30">
+            <p className="text-[10px] font-medium text-violet-300 truncate" title={panelMotd}>
+              📢 {panelMotd}
+            </p>
+          </div>
+        )}
 
         {/* Live sync pill */}
         <div className="px-4 py-3 border-b border-white/5 bg-zinc-900/40">

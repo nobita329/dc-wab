@@ -58,16 +58,26 @@ export function Navbar({ branding, navigation }: NavbarProps) {
     <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-zinc-950/70 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
-            <span className="font-extrabold text-white text-base">N</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          {branding.panelLogo || branding.logoImageUrl ? (
+            <img
+              src={branding.panelLogo || branding.logoImageUrl}
+              alt={branding.panelName || branding.logoText || "Logo"}
+              className="h-9 w-9 rounded-xl object-cover shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform border border-white/10"
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
+              <span className="font-extrabold text-white text-base">
+                {(branding.panelName || branding.logoText || "N").charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
           <div className="flex flex-col">
             <span className="text-sm font-bold tracking-wider text-white">
-              {branding.logoText || "NOVA STUDIO"}
+              {branding.panelName || branding.logoText || "NOVA STUDIO"}
             </span>
             <span className="text-[10px] tracking-widest uppercase text-violet-400 font-semibold">
-              Design & Tech
+              {branding.panelFaviconName || branding.siteTagline || "Design & Tech"}
             </span>
           </div>
         </Link>
