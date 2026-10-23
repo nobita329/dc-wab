@@ -1,0 +1,16 @@
+{
+  "id": "backup-2026-10-23T03-15-47-441Z",
+  "filename": "backup-2026-10-23T03-15-47-441Z",
+  "sizeBytes": 180224,
+  "sizeFormatted": "176 KB",
+  "createdAt": "2026-10-23T03:15:47.455Z",
+  "includedDbs": [
+    "user.db",
+    "app.db",
+    "settings.db",
+    "content.db",
+    "activity.db",
+    "api.db"
+  ],
+  "checksum": "f99e7f7a1f84f42b488e621375a0fdbe823453b92b4c02554778e83335540b0b"
+}

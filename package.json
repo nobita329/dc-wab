@@ -1,0 +1,30 @@
+{
+  "name": "nova-studio",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"API,WEB\" -c \"cyan.bold,green.bold\" \"npm run --workspace=apps/api dev\" \"npm run --workspace=apps/web dev\"",
+    "dev:web": "npm run --workspace=apps/web dev",
+    "dev:api": "npm run --workspace=apps/api dev",
+    "build": "npm run --workspace=shared build && npm run --workspace=apps/api build && npm run --workspace=apps/web build",
+    "start": "concurrently -k -p \"[{name}]\" -n \"API,WEB\" -c \"cyan.bold,green.bold\" \"npm run --workspace=apps/api start\" \"npm run --workspace=apps/web start\"",
+    "start:web": "npm run --workspace=apps/web start",
+    "start:api": "npm run --workspace=apps/api start",
+    "lint": "npm run lint --workspaces",
+    "db:seed": "npm run --workspace=apps/api db:seed",
+    "pm2:start": "PM2_HOME=$(pwd)/.pm2 npx pm2 start ecosystem.config.cjs",
+    "pm2:stop": "PM2_HOME=$(pwd)/.pm2 npx pm2 stop ecosystem.config.cjs",
+    "pm2:restart": "PM2_HOME=$(pwd)/.pm2 npx pm2 restart ecosystem.config.cjs",
+    "pm2:status": "PM2_HOME=$(pwd)/.pm2 npx pm2 status",
+    "pm2:logs": "PM2_HOME=$(pwd)/.pm2 npx pm2 logs",
+    "pm2:delete": "PM2_HOME=$(pwd)/.pm2 npx pm2 delete ecosystem.config.cjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "pm2": "^7.1.0"
+  }
+}
