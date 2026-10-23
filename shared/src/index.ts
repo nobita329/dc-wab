@@ -50,18 +50,30 @@ export interface BrandingSettings {
   panelFaviconName?: string;
   panelFaviconLogo?: string;
   panelMotd?: string;
+  panelMotdSubtitle?: string;
+  panelMotdPosition?: "left" | "right" | "top";
   panelMotdEnabled?: boolean;
   panelMotdImage?: string;
   panelMotdLink?: string;
   // Panel Background & Glassmorphism
-  backgroundType?: "color" | "image" | "video";
+  backgroundType?: "color" | "gradient" | "image" | "video";
   backgroundUrl?: string;
+  backgroundFit?: "cover" | "contain" | "fill";
+  backgroundPosition?: "center" | "top" | "bottom" | "left" | "right";
   backgroundOpacity?: number;
   panelTransparency?: number;
   panelBlur?: number;
+  overlayColor?: string;
+  overlayOpacity?: number;
+  gradientFrom?: string;
+  gradientTo?: string;
+  gradientAngle?: number;
   favoriteWallpapers?: string[];
   glassTint?: string;
   enablePublicBackground?: boolean;
+  videoAutoplay?: boolean;
+  videoLoop?: boolean;
+  videoMuted?: boolean;
 }
 
 export interface SeoSettings {
@@ -70,6 +82,25 @@ export interface SeoSettings {
   keywords: string[];
   ogImageUrl: string;
   twitterHandle: string;
+  canonicalUrl?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  themeColor?: string;
+  robotsIndex?: string;
+}
+
+export interface FeatureSettings {
+  allowUserCustomBackground: boolean;
+  allowUserTransparency: boolean;
+  allowUserBlur: boolean;
+  allowUserTheme: boolean;
+  allowUserWallpapers: boolean;
+  enablePublicBackground: boolean;
+  enableVideoBackground: boolean;
+  enableMotdBanner: boolean;
+  enableGlassmorphism: boolean;
+  defaultUserTheme: "dark" | "light" | "system";
+  lastSavedTime?: string;
 }
 
 export interface SocialLink {
@@ -83,9 +114,29 @@ export interface SocialLink {
 export interface SiteSettings {
   branding: BrandingSettings;
   seo: SeoSettings;
+  features?: FeatureSettings;
   socials: SocialLink[];
   updatedAt: string;
   updatedBy: string;
+}
+
+export interface UserPanelPreferences {
+  userId: string;
+  theme?: "dark" | "light" | "system";
+  backgroundType?: "color" | "gradient" | "image" | "video";
+  backgroundUrl?: string;
+  backgroundFit?: "cover" | "contain" | "fill";
+  backgroundPosition?: "center" | "top" | "bottom" | "left" | "right";
+  backgroundOpacity?: number;
+  panelTransparency?: number;
+  panelBlur?: number;
+  overlayColor?: string;
+  overlayOpacity?: number;
+  gradientFrom?: string;
+  gradientTo?: string;
+  gradientAngle?: number;
+  favoriteWallpapers?: string[];
+  updatedAt?: string;
 }
 
 export const BrandingSettingsSchema = z.object({
@@ -105,19 +156,168 @@ export const BrandingSettingsSchema = z.object({
   panelFaviconName: z.string().default("").optional(),
   panelFaviconLogo: z.string().default("").optional(),
   panelMotd: z.string().default("").optional(),
+  panelMotdSubtitle: z.string().default("").optional(),
+  panelMotdPosition: z.enum(["left", "right", "top"]).default("left").optional(),
   panelMotdEnabled: z.boolean().default(true).optional(),
   panelMotdImage: z.string().default("").optional(),
   panelMotdLink: z.string().default("").optional(),
   // Panel Background & Glassmorphism
-  backgroundType: z.enum(["color", "image", "video"]).default("image").optional(),
+  backgroundType: z.enum(["color", "gradient", "image", "video"]).default("image").optional(),
   backgroundUrl: z.string().default("").optional(),
+  backgroundFit: z.enum(["cover", "contain", "fill"]).default("cover").optional(),
+  backgroundPosition: z.enum(["center", "top", "bottom", "left", "right"]).default("center").optional(),
   backgroundOpacity: z.number().min(0).max(100).default(100).optional(),
   panelTransparency: z.number().min(0).max(100).default(35).optional(),
   panelBlur: z.number().min(0).max(40).default(16).optional(),
+  overlayColor: z.string().default("#09090b").optional(),
+  overlayOpacity: z.number().min(0).max(100).default(0).optional(),
+  gradientFrom: z.string().default("#7c3aed").optional(),
+  gradientTo: z.string().default("#06b6d4").optional(),
+  gradientAngle: z.number().min(0).max(360).default(135).optional(),
   favoriteWallpapers: z.array(z.string()).default([]).optional(),
   glassTint: z.string().default("#12111a").optional(),
   enablePublicBackground: z.boolean().default(true).optional(),
+  videoAutoplay: z.boolean().default(true).optional(),
+  videoLoop: z.boolean().default(true).optional(),
+  videoMuted: z.boolean().default(true).optional(),
 });
+
+export const SeoSettingsSchema = z.object({
+  metaTitle: z.string(),
+  metaDescription: z.string(),
+  keywords: z.array(z.string()),
+  ogImageUrl: z.string(),
+  twitterHandle: z.string(),
+  canonicalUrl: z.string().default("").optional(),
+  ogTitle: z.string().default("").optional(),
+  ogDescription: z.string().default("").optional(),
+  themeColor: z.string().default("#7c3aed").optional(),
+  robotsIndex: z.string().default("index, follow").optional(),
+});
+
+export const FeatureSettingsSchema = z.object({
+  allowUserCustomBackground: z.boolean().default(true),
+  allowUserTransparency: z.boolean().default(true),
+  allowUserBlur: z.boolean().default(true),
+  allowUserTheme: z.boolean().default(true),
+  allowUserWallpapers: z.boolean().default(true),
+  enablePublicBackground: z.boolean().default(true),
+  enableVideoBackground: z.boolean().default(true),
+  enableMotdBanner: z.boolean().default(true),
+  enableGlassmorphism: z.boolean().default(true),
+  defaultUserTheme: z.enum(["dark", "light", "system"]).default("dark"),
+  lastSavedTime: z.string().optional(),
+});
+
+export const UserPanelPreferencesSchema = z.object({
+  userId: z.string().min(1),
+  theme: z.enum(["dark", "light", "system"]).optional(),
+  backgroundType: z.enum(["color", "gradient", "image", "video"]).optional(),
+  backgroundUrl: z.string().optional(),
+  backgroundFit: z.enum(["cover", "contain", "fill"]).optional(),
+  backgroundPosition: z.enum(["center", "top", "bottom", "left", "right"]).optional(),
+  backgroundOpacity: z.number().min(0).max(100).optional(),
+  panelTransparency: z.number().min(0).max(100).optional(),
+  panelBlur: z.number().min(0).max(40).optional(),
+  overlayColor: z.string().optional(),
+  overlayOpacity: z.number().min(0).max(100).optional(),
+  gradientFrom: z.string().optional(),
+  gradientTo: z.string().optional(),
+  gradientAngle: z.number().min(0).max(360).optional(),
+  favoriteWallpapers: z.array(z.string()).optional(),
+  updatedAt: z.string().optional(),
+});
+
+export const SocialLinkSchema = z.object({
+  id: z.string(),
+  platform: z.enum(["github", "twitter", "linkedin", "instagram", "youtube", "dribbble", "other"]),
+  label: z.string(),
+  url: z.string(),
+  enabled: z.boolean(),
+});
+
+export const SiteSettingsSchema = z.object({
+  branding: BrandingSettingsSchema,
+  seo: SeoSettingsSchema,
+  features: FeatureSettingsSchema.optional(),
+  socials: z.array(SocialLinkSchema),
+});
+
+export const DEFAULT_GLOBAL_SETTINGS: SiteSettings = {
+  branding: {
+    siteTitle: "Nova Studio — Creative Digital Agency",
+    siteTagline: "Crafting transcendent digital experiences, immersive brands, and high-performance web applications.",
+    logoText: "NOVA STUDIO",
+    logoImageUrl: "",
+    faviconUrl: "/favicon.ico",
+    primaryColor: "#7c3aed",
+    accentColor: "#06b6d4",
+    fontFamily: "Inter, sans-serif",
+    borderRadius: "0.5rem",
+    defaultTheme: "dark",
+    panelName: "NOVA STUDIO",
+    panelLogo: "",
+    panelFaviconName: "Nova Web Panel",
+    panelFaviconLogo: "/favicon.ico",
+    panelMotd: "Welcome to Nova Studio — Elite Engineering & Creative System",
+    panelMotdSubtitle: "Latest stable architecture release active",
+    panelMotdPosition: "left",
+    panelMotdEnabled: true,
+    panelMotdImage: "",
+    panelMotdLink: "",
+    backgroundType: "image",
+    backgroundUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=3840&auto=format&fit=crop",
+    backgroundFit: "cover",
+    backgroundPosition: "center",
+    backgroundOpacity: 100,
+    panelTransparency: 35,
+    panelBlur: 16,
+    overlayColor: "#09090b",
+    overlayOpacity: 0,
+    gradientFrom: "#7c3aed",
+    gradientTo: "#06b6d4",
+    gradientAngle: 135,
+    favoriteWallpapers: [],
+    glassTint: "#12111a",
+    enablePublicBackground: true,
+    videoAutoplay: true,
+    videoLoop: true,
+    videoMuted: true,
+  },
+  seo: {
+    metaTitle: "Nova Studio — High Impact Digital Design & Engineering",
+    metaDescription: "Nova Studio is an elite creative digital agency specializing in modern web design, scalable architectures, and interactive digital experiences.",
+    keywords: ["creative studio", "digital agency", "web development", "nextjs", "react", "ux design", "branding"],
+    ogImageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
+    twitterHandle: "@novastudio",
+    canonicalUrl: "",
+    ogTitle: "Nova Studio — High Impact Digital Design & Engineering",
+    ogDescription: "Elite creative digital agency specializing in modern web design and interactive systems.",
+    themeColor: "#7c3aed",
+    robotsIndex: "index, follow",
+  },
+  features: {
+    allowUserCustomBackground: true,
+    allowUserTransparency: true,
+    allowUserBlur: true,
+    allowUserTheme: true,
+    allowUserWallpapers: true,
+    enablePublicBackground: true,
+    enableVideoBackground: true,
+    enableMotdBanner: true,
+    enableGlassmorphism: true,
+    defaultUserTheme: "dark",
+    lastSavedTime: "2026-10-23T00:00:00.000Z",
+  },
+  socials: [
+    { id: "1", platform: "github", label: "GitHub", url: "https://github.com", enabled: true },
+    { id: "2", platform: "twitter", label: "X / Twitter", url: "https://twitter.com", enabled: true },
+    { id: "3", platform: "dribbble", label: "Dribbble", url: "https://dribbble.com", enabled: true },
+    { id: "4", platform: "linkedin", label: "LinkedIn", url: "https://linkedin.com", enabled: true },
+  ],
+  updatedAt: "2026-10-23T00:00:00.000Z",
+  updatedBy: "system",
+};
 
 // ==========================================
 // Wallpaper Types (4K Wallpapers Integration)
@@ -148,28 +348,6 @@ export interface WallpaperResponse {
   totalPages: number;
   categories: WallpaperCategory[];
 }
-
-export const SeoSettingsSchema = z.object({
-  metaTitle: z.string(),
-  metaDescription: z.string(),
-  keywords: z.array(z.string()),
-  ogImageUrl: z.string(),
-  twitterHandle: z.string(),
-});
-
-export const SocialLinkSchema = z.object({
-  id: z.string(),
-  platform: z.enum(["github", "twitter", "linkedin", "instagram", "youtube", "dribbble", "other"]),
-  label: z.string(),
-  url: z.string(),
-  enabled: z.boolean(),
-});
-
-export const SiteSettingsSchema = z.object({
-  branding: BrandingSettingsSchema,
-  seo: SeoSettingsSchema,
-  socials: z.array(SocialLinkSchema),
-});
 
 // ==========================================
 // Home Page Content Types

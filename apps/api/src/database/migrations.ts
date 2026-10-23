@@ -79,6 +79,29 @@ const settingsMigrations: Migration[] = [
       `);
     },
   },
+  {
+    version: 2,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS user_panel_preferences (
+          user_id TEXT PRIMARY KEY,
+          preferences TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_user_prefs_user_id ON user_panel_preferences(user_id);
+
+        CREATE TABLE IF NOT EXISTS user_wallpaper_favorites (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          wallpaper_id TEXT NOT NULL,
+          wallpaper_url TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          UNIQUE(user_id, wallpaper_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_user_favs_user_id ON user_wallpaper_favorites(user_id);
+      `);
+    },
+  },
 ];
 
 const contentMigrations: Migration[] = [

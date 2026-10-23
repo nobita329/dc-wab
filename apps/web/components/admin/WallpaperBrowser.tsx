@@ -11,15 +11,24 @@ import {
   ChevronRight,
   Eye,
   Download,
-  Filter,
   Sparkles,
   Image as ImageIcon,
+  RotateCcw,
+  Maximize2,
+  X,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { WallpaperItem, WallpaperResponse } from "@nova/shared";
 
@@ -42,9 +51,10 @@ export function WallpaperBrowser({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(false);
+  const [previewModalWallpaper, setPreviewModalWallpaper] = useState<WallpaperItem | null>(null);
 
   // Fetch wallpapers from API with pagination, category, and search query
-  const { data, isLoading, isPlaceholderData } = useQuery<WallpaperResponse>({
+  const { data, isLoading, isError, refetch, isPlaceholderData } = useQuery<WallpaperResponse>({
     queryKey: ["wallpapers", selectedCategory, searchQuery, page],
     queryFn: async () => {
       const res = await api.get("/api/wallpapers", {
@@ -66,12 +76,17 @@ export function WallpaperBrowser({
 
   // Filter for favorites tab
   const displayedWallpapers = showFavoritesOnly
-    ? wallpapers.filter((w) => favoriteWallpapers.includes(w.fullUrl) || favoriteWallpapers.includes(w.id))
+    ? wallpapers.filter(
+        (w) => favoriteWallpapers.includes(w.fullUrl) || favoriteWallpapers.includes(w.id)
+      )
     : wallpapers;
 
   const handleApply = (wallpaper: WallpaperItem) => {
     onSelectWallpaper(wallpaper.fullUrl, "image");
     toast.success(`Applied "${wallpaper.title}" as background!`);
+    if (previewModalWallpaper) {
+      setPreviewModalWallpaper(null);
+    }
   };
 
   const handleDownload = (wallpaper: WallpaperItem) => {
@@ -81,7 +96,7 @@ export function WallpaperBrowser({
 
   return (
     <div className="space-y-6">
-      {/* Category Pills & Search Bar */}
+      {/* Search Bar & Controls */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Search Box */}
@@ -93,7 +108,7 @@ export function WallpaperBrowser({
                 setSearchQuery(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search 4K wallpapers by title, tags (e.g. AMOLED, anime, space)..."
+              placeholder="Search 4K wallpapers by title, keyword (e.g. AMOLED, anime, space)..."
               className="pl-9 bg-zinc-900/80 border-white/10 text-xs text-white placeholder:text-zinc-500 rounded-xl"
             />
             {searchQuery && (
@@ -110,7 +125,7 @@ export function WallpaperBrowser({
             )}
           </div>
 
-          {/* Quick Filter: Favorites Toggle */}
+          {/* Quick Filter: Favorites Toggle & 4kwallpapers.com Source link */}
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -135,6 +150,7 @@ export function WallpaperBrowser({
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-cyan-400 transition-colors px-3 py-1.5 rounded-xl border border-white/5 bg-zinc-900/50"
+              title="Official 4K Wallpapers Directory"
             >
               <span>4kwallpapers.com</span>
               <ExternalLink className="h-3 w-3" />
@@ -183,6 +199,24 @@ export function WallpaperBrowser({
             </div>
           ))}
         </div>
+      ) : isError ? (
+        <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-red-500/20 bg-red-950/10">
+          <ImageIcon className="h-10 w-10 text-red-400 mx-auto mb-3" />
+          <h3 className="text-sm font-semibold text-white">Failed to load wallpapers</h3>
+          <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+            Unable to connect to wallpaper feed. Check connection or retry.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="mt-4 text-xs border-white/10 gap-1.5"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Retry</span>
+          </Button>
+        </div>
       ) : displayedWallpapers.length === 0 ? (
         <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-white/10 bg-zinc-950/40">
           <ImageIcon className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
@@ -227,7 +261,7 @@ export function WallpaperBrowser({
                 }`}
               >
                 {/* Thumbnail Container */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-900">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-900 cursor-pointer" onClick={() => setPreviewModalWallpaper(wallpaper)}>
                   <img
                     src={wallpaper.thumbnailUrl}
                     alt={wallpaper.title}
@@ -248,7 +282,7 @@ export function WallpaperBrowser({
                         e.stopPropagation();
                         onToggleFavorite(wallpaper.fullUrl);
                       }}
-                      className="pointer-events-auto h-7 w-7 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-zinc-300 hover:text-amber-400 transition-colors"
+                      className="pointer-events-auto h-7 w-7 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-zinc-300 hover:text-amber-400 transition-colors shadow-md"
                       title={isFav ? "Remove from favorites" : "Add to favorites"}
                     >
                       <Star
@@ -261,26 +295,30 @@ export function WallpaperBrowser({
 
                   {/* Hover Overlay Actions */}
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-                    {onPreviewWallpaper && (
-                      <button
-                        type="button"
-                        onClick={() => onPreviewWallpaper(wallpaper.fullUrl)}
-                        className="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] font-medium backdrop-blur-md flex items-center gap-1.5 transition-colors shadow-lg"
-                        title="Live Preview"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        <span>Preview</span>
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviewModalWallpaper(wallpaper);
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] font-medium backdrop-blur-md flex items-center gap-1.5 transition-colors shadow-lg"
+                      title="Open Larger 4K Preview"
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      <span>Preview</span>
+                    </button>
 
                     <button
                       type="button"
-                      onClick={() => handleDownload(wallpaper)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload(wallpaper);
+                      }}
                       className="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] font-medium backdrop-blur-md flex items-center gap-1.5 transition-colors shadow-lg"
                       title="Download / View in 4K"
                     >
                       <Download className="h-3.5 w-3.5" />
-                      <span>4K File</span>
+                      <span>4K</span>
                     </button>
                   </div>
                 </div>
@@ -289,7 +327,8 @@ export function WallpaperBrowser({
                 <div className="p-3.5 flex flex-col justify-between flex-1 gap-3">
                   <div>
                     <h4
-                      className="text-xs font-semibold text-white truncate"
+                      className="text-xs font-semibold text-white truncate cursor-pointer hover:text-violet-300 transition-colors"
+                      onClick={() => setPreviewModalWallpaper(wallpaper)}
                       title={wallpaper.title}
                     >
                       {wallpaper.title}
@@ -306,7 +345,7 @@ export function WallpaperBrowser({
                         <span>Active</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] text-zinc-500 font-mono">4K UHD</span>
+                      <span className="text-[10px] text-zinc-500 font-mono">3840x2160</span>
                     )}
 
                     <Button
@@ -366,7 +405,6 @@ export function WallpaperBrowser({
             <div className="hidden sm:flex items-center gap-1">
               {Array.from({ length: totalPages }).map((_, i) => {
                 const pageNum = i + 1;
-                // Show first, last, current, and neighbours
                 if (
                   pageNum === 1 ||
                   pageNum === totalPages ||
@@ -412,7 +450,105 @@ export function WallpaperBrowser({
           </div>
         </div>
       )}
+
+      {/* LARGER 4K PREVIEW MODAL */}
+      {previewModalWallpaper && (
+        <Dialog open={Boolean(previewModalWallpaper)} onOpenChange={() => setPreviewModalWallpaper(null)}>
+          <DialogContent className="max-w-4xl p-0 overflow-hidden bg-zinc-950/95 border border-white/20 rounded-3xl shadow-2xl backdrop-blur-2xl">
+            <div className="relative aspect-video w-full bg-black overflow-hidden">
+              <img
+                src={previewModalWallpaper.fullUrl}
+                alt={previewModalWallpaper.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                <Badge className="bg-black/70 backdrop-blur-md text-xs text-white border border-white/15 px-3 py-1">
+                  {previewModalWallpaper.resolution}
+                </Badge>
+                <div className="pointer-events-auto flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onToggleFavorite(previewModalWallpaper.fullUrl)}
+                    className="h-8 w-8 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:text-amber-400 transition-colors shadow-lg"
+                    title="Toggle Favorite"
+                  >
+                    <Star
+                      className={`h-4 w-4 ${
+                        favoriteWallpapers.includes(previewModalWallpaper.fullUrl)
+                          ? "fill-amber-400 text-amber-400"
+                          : "text-white"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-bold text-white">{previewModalWallpaper.title}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-[10px] text-violet-300 border-violet-500/30 uppercase">
+                      Category: {previewModalWallpaper.category}
+                    </Badge>
+                    <span className="text-xs text-zinc-500">•</span>
+                    <span className="text-xs text-zinc-400">Native 4K UHD Ultra Resolution</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleDownload(previewModalWallpaper)}
+                    className="flex-1 sm:flex-initial text-xs gap-1.5 border-white/10"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Download 4K</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="studio"
+                    onClick={() => handleApply(previewModalWallpaper)}
+                    className="flex-1 sm:flex-initial text-xs gap-1.5 shadow-md shadow-violet-600/30"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>Apply as Background</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Tags & Source */}
+              <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] text-zinc-500">Tags:</span>
+                  {previewModalWallpaper.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-0.5 rounded-md bg-zinc-900 border border-white/5 text-[11px] text-zinc-300"
+                    >
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+
+                {previewModalWallpaper.sourceUrl && (
+                  <a
+                    href={previewModalWallpaper.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 text-[11px] underline-offset-4 hover:underline"
+                  >
+                    <span>View on 4kwallpapers.com</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
-

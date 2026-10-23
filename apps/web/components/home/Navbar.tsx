@@ -44,6 +44,14 @@ export function Navbar({ branding, navigation }: NavbarProps) {
       order: 1.9,
     });
   }
+  if (!navItems.some((item) => item.href === "/settings" || item.label.toLowerCase() === "appearance")) {
+    navItems.push({
+      id: "nav-appearance",
+      label: "Appearance",
+      href: "/settings",
+      order: 4.0,
+    });
+  }
 
   const sortedNav = navItems.sort((a, b) => a.order - b.order);
 
