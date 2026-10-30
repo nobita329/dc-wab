@@ -1,0 +1,1154 @@
+[
+  {
+    "cat": "linux",
+    "title": "Update System",
+    "code": "sudo apt update && sudo apt upgrade -y",
+    "desc": "Update and upgrade all packages"
+  },
+  {
+    "cat": "linux",
+    "title": "Check Disk Usage",
+    "code": "df -h",
+    "desc": "Show disk space usage"
+  },
+  {
+    "cat": "linux",
+    "title": "Check Memory Usage",
+    "code": "free -h",
+    "desc": "Show memory usage"
+  },
+  {
+    "cat": "linux",
+    "title": "List Files",
+    "code": "ls -la",
+    "desc": "List all files with details"
+  },
+  {
+    "cat": "linux",
+    "title": "Find Files",
+    "code": "find /path -name \"filename\"",
+    "desc": "Find files by name"
+  },
+  {
+    "cat": "linux",
+    "title": "Search in Files",
+    "code": "grep -r \"pattern\" /path",
+    "desc": "Recursively search for pattern"
+  },
+  {
+    "cat": "linux",
+    "title": "Process List",
+    "code": "ps aux",
+    "desc": "List all running processes"
+  },
+  {
+    "cat": "linux",
+    "title": "Kill Process",
+    "code": "kill -9 PID",
+    "desc": "Force kill process by ID"
+  },
+  {
+    "cat": "linux",
+    "title": "Top Processes",
+    "code": "top",
+    "desc": "Show top CPU consuming processes"
+  },
+  {
+    "cat": "linux",
+    "title": "System Info",
+    "code": "uname -a",
+    "desc": "Show system information"
+  },
+  {
+    "cat": "linux",
+    "title": "Check Network",
+    "code": "netstat -tuln",
+    "desc": "Show network connections"
+  },
+  {
+    "cat": "linux",
+    "title": "Check Listening Ports",
+    "code": "ss -tuln",
+    "desc": "Show listening ports"
+  },
+  {
+    "cat": "linux",
+    "title": "File Permissions",
+    "code": "chmod 755 filename",
+    "desc": "Change file permissions"
+  },
+  {
+    "cat": "linux",
+    "title": "Change Owner",
+    "code": "chown user:group filename",
+    "desc": "Change file owner"
+  },
+  {
+    "cat": "linux",
+    "title": "Create Directory",
+    "code": "mkdir -p /path/to/dir",
+    "desc": "Create directory with parent directories"
+  },
+  {
+    "cat": "linux",
+    "title": "Remove Directory",
+    "code": "rm -rf directory",
+    "desc": "Remove directory and contents"
+  },
+  {
+    "cat": "linux",
+    "title": "Copy Files",
+    "code": "cp -r source destination",
+    "desc": "Copy files recursively"
+  },
+  {
+    "cat": "linux",
+    "title": "Move Files",
+    "code": "mv source destination",
+    "desc": "Move or rename files"
+  },
+  {
+    "cat": "linux",
+    "title": "Compress Files",
+    "code": "tar -czf archive.tar.gz folder/",
+    "desc": "Create compressed archive"
+  },
+  {
+    "cat": "linux",
+    "title": "Extract Archive",
+    "code": "tar -xzf archive.tar.gz",
+    "desc": "Extract compressed archive"
+  },
+  {
+    "cat": "linux",
+    "title": "Check File Type",
+    "code": "file filename",
+    "desc": "Determine file type"
+  },
+  {
+    "cat": "linux",
+    "title": "Count Lines",
+    "code": "wc -l filename",
+    "desc": "Count lines in file"
+  },
+  {
+    "cat": "linux",
+    "title": "View File Beginning",
+    "code": "head -n 10 filename",
+    "desc": "Show first 10 lines of file"
+  },
+  {
+    "cat": "linux",
+    "title": "View File End",
+    "code": "tail -n 10 filename",
+    "desc": "Show last 10 lines of file"
+  },
+  {
+    "cat": "linux",
+    "title": "Follow File",
+    "code": "tail -f filename",
+    "desc": "Follow file as it grows"
+  },
+  {
+    "cat": "linux",
+    "title": "Sort Lines",
+    "code": "sort filename",
+    "desc": "Sort lines in file"
+  },
+  {
+    "cat": "linux",
+    "title": "Remove Duplicates",
+    "code": "sort filename | uniq",
+    "desc": "Remove duplicate lines"
+  },
+  {
+    "cat": "linux",
+    "title": "Count Words",
+    "code": "wc -w filename",
+    "desc": "Count words in file"
+  },
+  {
+    "cat": "linux",
+    "title": "Replace Text",
+    "code": "sed \"s/old/new/g\" filename",
+    "desc": "Replace text in file"
+  },
+  {
+    "cat": "linux",
+    "title": "Find Text",
+    "code": "grep \"pattern\" filename",
+    "desc": "Find pattern in file"
+  },
+  {
+    "cat": "linux",
+    "title": "Archive Files",
+    "code": "tar -cf archive.tar files",
+    "desc": "Create uncompressed archive"
+  },
+  {
+    "cat": "linux",
+    "title": "Compress Gzip",
+    "code": "gzip filename",
+    "desc": "Compress file with gzip"
+  },
+  {
+    "cat": "vps",
+    "title": "Check System Load",
+    "code": "uptime",
+    "desc": "Show system uptime and load"
+  },
+  {
+    "cat": "vps",
+    "title": "Check CPU Info",
+    "code": "lscpu",
+    "desc": "Display CPU information"
+  },
+  {
+    "cat": "vps",
+    "title": "Check RAM Info",
+    "code": "lsmem",
+    "desc": "Display memory information"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Disk Info",
+    "code": "lsblk",
+    "desc": "List block devices"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Network Info",
+    "code": "ip addr",
+    "desc": "Show network interface information"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Network Stats",
+    "code": "nload",
+    "desc": "Monitor network traffic"
+  },
+  {
+    "cat": "vps",
+    "title": "Restart Network",
+    "code": "sudo systemctl restart networking",
+    "desc": "Restart network service"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Firewall",
+    "code": "sudo ufw status",
+    "desc": "Show firewall status"
+  },
+  {
+    "cat": "vps",
+    "title": "Enable Firewall",
+    "code": "sudo ufw enable",
+    "desc": "Enable firewall"
+  },
+  {
+    "cat": "vps",
+    "title": "Allow Port",
+    "code": "sudo ufw allow 80",
+    "desc": "Allow specific port"
+  },
+  {
+    "cat": "vps",
+    "title": "Check SSH Status",
+    "code": "sudo systemctl status ssh",
+    "desc": "Check SSH service status"
+  },
+  {
+    "cat": "vps",
+    "title": "Restart SSH",
+    "code": "sudo systemctl restart ssh",
+    "desc": "Restart SSH service"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Cron Jobs",
+    "code": "crontab -l",
+    "desc": "List scheduled cron jobs"
+  },
+  {
+    "cat": "vps",
+    "title": "System Logs",
+    "code": "journalctl -u service_name",
+    "desc": "View system logs for service"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Users",
+    "code": "who",
+    "desc": "Show logged in users"
+  },
+  {
+    "cat": "vps",
+    "title": "Add User",
+    "code": "sudo adduser username",
+    "desc": "Add new user"
+  },
+  {
+    "cat": "vps",
+    "title": "Delete User",
+    "code": "sudo deluser username",
+    "desc": "Delete user"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Process I/O",
+    "code": "iotop",
+    "desc": "Monitor I/O usage by process"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Bandwidth",
+    "code": "vnstat",
+    "desc": "Show network bandwidth statistics"
+  },
+  {
+    "cat": "vps",
+    "title": "Check Open Files",
+    "code": "lsof",
+    "desc": "List open files"
+  },
+  {
+    "cat": "docker",
+    "title": "List Containers",
+    "code": "docker ps -a",
+    "desc": "List all containers"
+  },
+  {
+    "cat": "docker",
+    "title": "List Images",
+    "code": "docker images",
+    "desc": "List all images"
+  },
+  {
+    "cat": "docker",
+    "title": "Run Container",
+    "code": "docker run -d -p 80:80 image_name",
+    "desc": "Run container in detached mode"
+  },
+  {
+    "cat": "docker",
+    "title": "Stop Container",
+    "code": "docker stop container_id",
+    "desc": "Stop running container"
+  },
+  {
+    "cat": "docker",
+    "title": "Start Container",
+    "code": "docker start container_id",
+    "desc": "Start stopped container"
+  },
+  {
+    "cat": "docker",
+    "title": "Remove Container",
+    "code": "docker rm container_id",
+    "desc": "Remove container"
+  },
+  {
+    "cat": "docker",
+    "title": "Remove Image",
+    "code": "docker rmi image_id",
+    "desc": "Remove image"
+  },
+  {
+    "cat": "docker",
+    "title": "Build Image",
+    "code": "docker build -t image_name .",
+    "desc": "Build image from Dockerfile"
+  },
+  {
+    "cat": "docker",
+    "title": "Pull Image",
+    "code": "docker pull image_name",
+    "desc": "Pull image from registry"
+  },
+  {
+    "cat": "docker",
+    "title": "Push Image",
+    "code": "docker push image_name",
+    "desc": "Push image to registry"
+  },
+  {
+    "cat": "docker",
+    "title": "Container Logs",
+    "code": "docker logs container_id",
+    "desc": "View container logs"
+  },
+  {
+    "cat": "docker",
+    "title": "Exec Command",
+    "code": "docker exec -it container_id /bin/bash",
+    "desc": "Execute command in running container"
+  },
+  {
+    "cat": "docker",
+    "title": "Docker Stats",
+    "code": "docker stats",
+    "desc": "Show container resource usage"
+  },
+  {
+    "cat": "docker",
+    "title": "System Info",
+    "code": "docker info",
+    "desc": "Show Docker system information"
+  },
+  {
+    "cat": "docker",
+    "title": "Docker Version",
+    "code": "docker --version",
+    "desc": "Show Docker version"
+  },
+  {
+    "cat": "docker",
+    "title": "Compose Up",
+    "code": "docker-compose up -d",
+    "desc": "Start services with Docker Compose"
+  },
+  {
+    "cat": "docker",
+    "title": "Compose Down",
+    "code": "docker-compose down",
+    "desc": "Stop services with Docker Compose"
+  },
+  {
+    "cat": "docker",
+    "title": "System Prune",
+    "code": "docker system prune",
+    "desc": "Remove unused Docker objects"
+  },
+  {
+    "cat": "docker",
+    "title": "Volume List",
+    "code": "docker volume ls",
+    "desc": "List Docker volumes"
+  },
+  {
+    "cat": "docker",
+    "title": "Network List",
+    "code": "docker network ls",
+    "desc": "List Docker networks"
+  },
+  {
+    "cat": "docker",
+    "title": "Volume Create",
+    "code": "docker volume create volume_name",
+    "desc": "Create named volume"
+  },
+  {
+    "cat": "git",
+    "title": "Initialize Repo",
+    "code": "git init",
+    "desc": "Initialize new Git repository"
+  },
+  {
+    "cat": "git",
+    "title": "Clone Repo",
+    "code": "git clone url",
+    "desc": "Clone repository from URL"
+  },
+  {
+    "cat": "git",
+    "title": "Check Status",
+    "code": "git status",
+    "desc": "Show repository status"
+  },
+  {
+    "cat": "git",
+    "title": "Add Files",
+    "code": "git add .",
+    "desc": "Add all files to staging"
+  },
+  {
+    "cat": "git",
+    "title": "Commit Changes",
+    "code": "git commit -m \"message\"",
+    "desc": "Commit staged changes"
+  },
+  {
+    "cat": "git",
+    "title": "Push Changes",
+    "code": "git push origin branch",
+    "desc": "Push changes to remote"
+  },
+  {
+    "cat": "git",
+    "title": "Pull Changes",
+    "code": "git pull origin branch",
+    "desc": "Pull changes from remote"
+  },
+  {
+    "cat": "git",
+    "title": "Create Branch",
+    "code": "git branch branch_name",
+    "desc": "Create new branch"
+  },
+  {
+    "cat": "git",
+    "title": "Switch Branch",
+    "code": "git checkout branch_name",
+    "desc": "Switch to branch"
+  },
+  {
+    "cat": "git",
+    "title": "Create & Switch",
+    "code": "git checkout -b branch_name",
+    "desc": "Create and switch to new branch"
+  },
+  {
+    "cat": "git",
+    "title": "Merge Branch",
+    "code": "git merge branch_name",
+    "desc": "Merge branch into current"
+  },
+  {
+    "cat": "git",
+    "title": "View Log",
+    "code": "git log",
+    "desc": "Show commit history"
+  },
+  {
+    "cat": "git",
+    "title": "Log Compact",
+    "code": "git log --oneline",
+    "desc": "Show compact commit history"
+  },
+  {
+    "cat": "git",
+    "title": "Diff Changes",
+    "code": "git diff",
+    "desc": "Show unstaged changes"
+  },
+  {
+    "cat": "git",
+    "title": "Diff Staged",
+    "code": "git diff --staged",
+    "desc": "Show staged changes"
+  },
+  {
+    "cat": "git",
+    "title": "Undo Last Commit",
+    "code": "git reset --soft HEAD~1",
+    "desc": "Undo last commit but keep changes"
+  },
+  {
+    "cat": "git",
+    "title": "Remove from Staging",
+    "code": "git reset HEAD filename",
+    "desc": "Remove file from staging"
+  },
+  {
+    "cat": "git",
+    "title": "Remove from Repo",
+    "code": "git rm filename",
+    "desc": "Remove file from repository"
+  },
+  {
+    "cat": "git",
+    "title": "Tag Version",
+    "code": "git tag v1.0.0",
+    "desc": "Create tag for version"
+  },
+  {
+    "cat": "git",
+    "title": "Push Tags",
+    "code": "git push origin --tags",
+    "desc": "Push tags to remote"
+  },
+  {
+    "cat": "networking",
+    "title": "Ping Host",
+    "code": "ping hostname",
+    "desc": "Test network connectivity"
+  },
+  {
+    "cat": "networking",
+    "title": "Trace Route",
+    "code": "traceroute hostname",
+    "desc": "Trace network path"
+  },
+  {
+    "cat": "networking",
+    "title": "DNS Lookup",
+    "code": "nslookup hostname",
+    "desc": "Lookup DNS information"
+  },
+  {
+    "cat": "networking",
+    "title": "Detailed DNS",
+    "code": "dig hostname",
+    "desc": "Detailed DNS lookup"
+  },
+  {
+    "cat": "networking",
+    "title": "Check Port",
+    "code": "telnet hostname port",
+    "desc": "Test port connectivity"
+  },
+  {
+    "cat": "networking",
+    "title": "Check Port 2",
+    "code": "nc -zv hostname port",
+    "desc": "Netcat port check"
+  },
+  {
+    "cat": "networking",
+    "title": "Download File",
+    "code": "wget url",
+    "desc": "Download file from URL"
+  },
+  {
+    "cat": "networking",
+    "title": "Download File 2",
+    "code": "curl url",
+    "desc": "Download file with curl"
+  },
+  {
+    "cat": "networking",
+    "title": "Download to File",
+    "code": "curl -o filename url",
+    "desc": "Download and save to file"
+  },
+  {
+    "cat": "networking",
+    "title": "HTTP Request",
+    "code": "curl -X GET url",
+    "desc": "Make HTTP GET request"
+  },
+  {
+    "cat": "networking",
+    "title": "HTTP POST",
+    "code": "curl -X POST -d \"data\" url",
+    "desc": "Make HTTP POST request"
+  },
+  {
+    "cat": "networking",
+    "title": "Check Interfaces",
+    "code": "ifconfig",
+    "desc": "Show network interfaces"
+  },
+  {
+    "cat": "networking",
+    "title": "Check Interfaces 2",
+    "code": "ip addr show",
+    "desc": "Show network interfaces (modern)"
+  },
+  {
+    "cat": "networking",
+    "title": "Configure Interface",
+    "code": "sudo ifconfig eth0 192.168.1.100",
+    "desc": "Set IP address for interface"
+  },
+  {
+    "cat": "networking",
+    "title": "Add Route",
+    "code": "sudo route add default gw 192.168.1.1",
+    "desc": "Add default gateway"
+  },
+  {
+    "cat": "networking",
+    "title": "Check ARP Table",
+    "code": "arp -a",
+    "desc": "Show ARP table"
+  },
+  {
+    "cat": "networking",
+    "title": "Flush DNS",
+    "code": "sudo systemctl restart systemd-resolved",
+    "desc": "Restart DNS resolver"
+  },
+  {
+    "cat": "networking",
+    "title": "Check Listening Ports",
+    "code": "sudo netstat -tulnp",
+    "desc": "Show listening ports with process"
+  },
+  {
+    "cat": "networking",
+    "title": "Speed Test",
+    "code": "speedtest-cli",
+    "desc": "Test network speed"
+  },
+  {
+    "cat": "networking",
+    "title": "Network Monitor",
+    "code": "iftop",
+    "desc": "Monitor network traffic"
+  },
+  {
+    "cat": "system",
+    "title": "Check Date",
+    "code": "date",
+    "desc": "Show current date and time"
+  },
+  {
+    "cat": "system",
+    "title": "Set Date",
+    "code": "sudo date -s \"YYYY-MM-DD HH:MM:SS\"",
+    "desc": "Set system date and time"
+  },
+  {
+    "cat": "system",
+    "title": "Check Timezone",
+    "code": "timedatectl",
+    "desc": "Show system time and date settings"
+  },
+  {
+    "cat": "system",
+    "title": "Set Timezone",
+    "code": "sudo timedatectl set-timezone Region/City",
+    "desc": "Set system timezone"
+  },
+  {
+    "cat": "system",
+    "title": "Check Uptime",
+    "code": "uptime",
+    "desc": "Show system uptime"
+  },
+  {
+    "cat": "system",
+    "title": "Shutdown",
+    "code": "sudo shutdown -h now",
+    "desc": "Shutdown system immediately"
+  },
+  {
+    "cat": "system",
+    "title": "Reboot",
+    "code": "sudo reboot",
+    "desc": "Reboot system"
+  },
+  {
+    "cat": "system",
+    "title": "Check Services",
+    "code": "systemctl list-units --type=service",
+    "desc": "List all services"
+  },
+  {
+    "cat": "system",
+    "title": "Start Service",
+    "code": "sudo systemctl start service_name",
+    "desc": "Start a service"
+  },
+  {
+    "cat": "system",
+    "title": "Stop Service",
+    "code": "sudo systemctl stop service_name",
+    "desc": "Stop a service"
+  },
+  {
+    "cat": "system",
+    "title": "Restart Service",
+    "code": "sudo systemctl restart service_name",
+    "desc": "Restart a service"
+  },
+  {
+    "cat": "system",
+    "title": "Enable Service",
+    "code": "sudo systemctl enable service_name",
+    "desc": "Enable service at boot"
+  },
+  {
+    "cat": "system",
+    "title": "Disable Service",
+    "code": "sudo systemctl disable service_name",
+    "desc": "Disable service at boot"
+  },
+  {
+    "cat": "system",
+    "title": "Check Service Status",
+    "code": "systemctl status service_name",
+    "desc": "Check service status"
+  },
+  {
+    "cat": "system",
+    "title": "Check Cron",
+    "code": "crontab -l",
+    "desc": "List user cron jobs"
+  },
+  {
+    "cat": "system",
+    "title": "Edit Cron",
+    "code": "crontab -e",
+    "desc": "Edit user cron jobs"
+  },
+  {
+    "cat": "system",
+    "title": "Check Processes",
+    "code": "ps aux | grep process_name",
+    "desc": "Find specific process"
+  },
+  {
+    "cat": "system",
+    "title": "Kill by Name",
+    "code": "sudo pkill process_name",
+    "desc": "Kill process by name"
+  },
+  {
+    "cat": "system",
+    "title": "Check Disk Usage",
+    "code": "du -sh /path",
+    "desc": "Show disk usage for directory"
+  },
+  {
+    "cat": "system",
+    "title": "Find Large Files",
+    "code": "find /path -type f -size +100M",
+    "desc": "Find files larger than 100MB"
+  },
+  {
+    "cat": "useful",
+    "title": "Update All",
+    "code": "apt update && apt upgrade -y",
+    "desc": "Update system"
+  },
+  {
+    "cat": "useful",
+    "title": "Install Basic",
+    "code": "apt install curl wget git sudo -y",
+    "desc": "Install essentials"
+  },
+  {
+    "cat": "useful",
+    "title": "Set Timezone",
+    "code": "timedatectl set-timezone Asia/Kolkata",
+    "desc": "Set timezone to IST"
+  },
+  {
+    "cat": "useful",
+    "title": "Change Hostname",
+    "code": "hostnamectl set-hostname myserver",
+    "desc": "Change hostname"
+  },
+  {
+    "cat": "useful",
+    "title": "Clear Cache",
+    "code": "sync; echo 3 > /proc/sys/vm/drop_caches",
+    "desc": "Clear RAM cache"
+  },
+  {
+    "cat": "useful",
+    "title": "Watch Command",
+    "code": "watch -n 1 \"command\"",
+    "desc": "Run command every second"
+  },
+  {
+    "cat": "linux",
+    "title": "Find Executable",
+    "code": "which command",
+    "desc": "Find location of executable"
+  },
+  {
+    "cat": "linux",
+    "title": "Command History",
+    "code": "history",
+    "desc": "Show command history"
+  },
+  {
+    "cat": "linux",
+    "title": "Create Link",
+    "code": "ln -s source target",
+    "desc": "Create symbolic link"
+  },
+  {
+    "cat": "linux",
+    "title": "Disk Free",
+    "code": "df -h",
+    "desc": "Disk free space"
+  },
+  {
+    "cat": "linux",
+    "title": "Watch Command",
+    "code": "watch -n 1 \"command\"",
+    "desc": "Run command every second"
+  },
+  {
+    "cat": "linux",
+    "title": "User ID",
+    "code": "id",
+    "desc": "Show user IDs"
+  },
+  {
+    "cat": "linux",
+    "title": "Who Am I",
+    "code": "whoami",
+    "desc": "Show current user"
+  },
+  {
+    "cat": "system",
+    "title": "CPU Temp",
+    "code": "sensors | grep -i temp",
+    "desc": "Check CPU temperature"
+  },
+  {
+    "cat": "system",
+    "title": "System Stats",
+    "code": "dstat",
+    "desc": "Comprehensive system statistics"
+  },
+  {
+    "cat": "system",
+    "title": "Monitor Processes",
+    "code": "htop",
+    "desc": "Interactive process viewer"
+  },
+  {
+    "cat": "system",
+    "title": "Open Ports",
+    "code": "ss -tuln",
+    "desc": "Show listening ports"
+  },
+  {
+    "cat": "docker",
+    "title": "Docker Events",
+    "code": "docker events",
+    "desc": "Monitor Docker events"
+  },
+  {
+    "cat": "docker",
+    "title": "Docker Top",
+    "code": "docker top container",
+    "desc": "Show running processes in container"
+  },
+  {
+    "cat": "docker",
+    "title": "Docker Port",
+    "code": "docker port container",
+    "desc": "Show port mapping"
+  },
+  {
+    "cat": "docker",
+    "title": "Prune System",
+    "code": "docker system prune -a",
+    "desc": "Clean up unused data"
+  },
+  {
+    "cat": "git",
+    "title": "Log Graph",
+    "code": "git log --oneline --graph --all",
+    "desc": "Show log as graph"
+  },
+  {
+    "cat": "git",
+    "title": "Log Author",
+    "code": "git log --author=\"name\"",
+    "desc": "Show commits by author"
+  },
+  {
+    "cat": "git",
+    "title": "Stash List",
+    "code": "git stash list",
+    "desc": "List all stashes"
+  },
+  {
+    "cat": "git",
+    "title": "Remote URL",
+    "code": "git remote -v",
+    "desc": "Show remote URLs"
+  },
+  {
+    "cat": "networking",
+    "title": "Public IP",
+    "code": "curl ifconfig.me",
+    "desc": "Get public IP"
+  },
+  {
+    "cat": "networking",
+    "title": "Port Scan",
+    "code": "nmap -p 1-1000 host",
+    "desc": "Scan ports 1-1000"
+  },
+  {
+    "cat": "networking",
+    "title": "SSL Check",
+    "code": "openssl s_client -connect host:443",
+    "desc": "Check SSL certificate"
+  },
+  {
+    "cat": "networking",
+    "title": "Whois",
+    "code": "whois domain.com",
+    "desc": "Get domain info"
+  },
+  {
+    "cat": "auto",
+    "title": "Edit Cron",
+    "code": "crontab -e",
+    "desc": "Edit cron jobs for automation"
+  },
+  {
+    "cat": "auto",
+    "title": "List Cron Jobs",
+    "code": "crontab -l",
+    "desc": "List scheduled tasks"
+  },
+  {
+    "cat": "auto",
+    "title": "Watch Command",
+    "code": "watch -n 5 \"ls -la\"",
+    "desc": "Auto-refresh command output"
+  },
+  {
+    "cat": "auto",
+    "title": "Auto Remove",
+    "code": "apt autoremove -y",
+    "desc": "Automatically remove unused packages"
+  },
+  {
+    "cat": "auto",
+    "title": "Unattended Upgrades",
+    "code": "dpkg-reconfigure --priority=low unattended-upgrades",
+    "desc": "Enable automatic security updates"
+  },
+  {
+    "cat": "auto",
+    "title": "Systemd Timer",
+    "code": "systemctl list-timers",
+    "desc": "List active systemd timers"
+  },
+  {
+    "cat": "auto",
+    "title": "Auto Heal Docker",
+    "code": "docker run -d --name autoheal jasonboyle/docker-autoheal",
+    "desc": "Restart unhealthy containers"
+  },
+  {
+    "cat": "auto",
+    "title": "Log Rotate",
+    "code": "logrotate -f /etc/logrotate.conf",
+    "desc": "Force log rotation manually"
+  },
+  {
+    "cat": "auto",
+    "title": "Ansible Playbook",
+    "code": "ansible-playbook site.yml",
+    "desc": "Run automation playbook"
+  },
+  {
+    "cat": "auto",
+    "title": "Terraform Apply",
+    "code": "terraform apply -auto-approve",
+    "desc": "Auto-provision infrastructure"
+  },
+  {
+    "cat": "review",
+    "title": "Git Diff",
+    "code": "git diff HEAD~1 HEAD",
+    "desc": "Review changes between commits"
+  },
+  {
+    "cat": "review",
+    "title": "ShellCheck",
+    "code": "shellcheck script.sh",
+    "desc": "Review shell script for errors"
+  },
+  {
+    "cat": "review",
+    "title": "NPM Audit",
+    "code": "npm audit",
+    "desc": "Review Node.js dependencies for vulnerabilities"
+  },
+  {
+    "cat": "review",
+    "title": "Docker Scan",
+    "code": "docker scan image_name",
+    "desc": "Review Docker image security"
+  },
+  {
+    "cat": "review",
+    "title": "Log Review",
+    "code": "journalctl -p err -b",
+    "desc": "Review system boot errors"
+  },
+  {
+    "cat": "review",
+    "title": "Lynis Audit",
+    "code": "lynis audit system",
+    "desc": "Full system security review"
+  },
+  {
+    "cat": "review",
+    "title": "Check Open Ports",
+    "code": "netstat -tulpn",
+    "desc": "Review listening ports"
+  },
+  {
+    "cat": "review",
+    "title": "Disk Usage Review",
+    "code": "ncdu /",
+    "desc": "Interactive disk usage review"
+  },
+  {
+    "cat": "review",
+    "title": "Git Blame",
+    "code": "git blame filename",
+    "desc": "Review who changed code lines"
+  },
+  {
+    "cat": "review",
+    "title": "Check Permissions",
+    "code": "namei -l /path/to/file",
+    "desc": "Review full path permissions"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Tuned Recommend",
+    "code": "tuned-adm recommend",
+    "desc": "Suggest system tuning profile"
+  },
+  {
+    "cat": "suggestion",
+    "title": "MySQL Tuner",
+    "code": "mysqltuner",
+    "desc": "Suggest MySQL optimizations"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Check Updates",
+    "code": "/usr/lib/update-notifier/apt-check --human-readable",
+    "desc": "Suggest pending updates"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Memory Suggestion",
+    "code": "vmstat -s",
+    "desc": "Analyze memory stats for tuning"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Power Top",
+    "code": "powertop --auto-tune",
+    "desc": "Suggest and apply power saving"
+  },
+  {
+    "cat": "suggestion",
+    "title": "HTOP",
+    "code": "htop",
+    "desc": "Visual process management suggestion"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Docker Prune",
+    "code": "docker system prune",
+    "desc": "Suggestion to clean unused data"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Find Large Files",
+    "code": "find / -xdev -type f -size +100M",
+    "desc": "Suggest cleaning large files"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Check Entropy",
+    "code": "cat /proc/sys/kernel/random/entropy_avail",
+    "desc": "Check if RNG needs boosting"
+  },
+  {
+    "cat": "suggestion",
+    "title": "Analyze Boot",
+    "code": "systemd-analyze blame",
+    "desc": "Suggest slow services to optimize"
+  }
+]

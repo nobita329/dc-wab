@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+d/**/dist/
+d/**/.next/
+d/**/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+*.log.*
+
+# Environment variables (CRITICAL: Do not commit sensitive keys/tokens)
+.env
+.env.*
+!.env.example
+*.env
+d/.env
+d/.env.*
+!d/.env.example
+
+# Process Manager
+.pm2/
+d/.pm2/
+
+# SQLite journal files & backups
+*.db-wal
+*.db-shm
+*.db-journal
+backups/
+d/backups/
+
+# Editor and OS
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.idea/
+.vscode/

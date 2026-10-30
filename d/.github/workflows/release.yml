@@ -1,0 +1,80 @@
+name: Automatic Release & Version Tag
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Packages & Application
+        run: |
+          npm run --workspace=shared build
+          npm run --workspace=apps/api build
+          npm run --workspace=apps/web build
+
+      - name: Calculate Version Tag
+        id: versioning
+        run: |
+          # Fetch all remote tags
+          git fetch --tags --force || true
+          
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "")
+          echo "Current latest tag: $LATEST_TAG"
+          
+          if [ -z "$LATEST_TAG" ]; then
+            NEW_TAG="v1.0.0"
+          else
+            # Strip 'v' if present
+            CLEAN_VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
+            MAJOR=$(echo "$CLEAN_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$CLEAN_VERSION" | cut -d. -f2)
+            PATCH=$(echo "$CLEAN_VERSION" | cut -d. -f3)
+            
+            # Fallback if parsing fails
+            if [ -z "$MAJOR" ] || [ -z "$MINOR" ] || [ -z "$PATCH" ]; then
+              NEW_TAG="v$(date +'%Y.%m.%d-%H%M%S')"
+            else
+              NEW_PATCH=$((PATCH + 1))
+              NEW_TAG="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+            fi
+          fi
+          
+          echo "tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
+          echo "New Version Tag: $NEW_TAG"
+
+      - name: Create Git Tag & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.versioning.outputs.tag }}" -m "Release ${{ steps.versioning.outputs.tag }}"
+          git push origin "${{ steps.versioning.outputs.tag }}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.versioning.outputs.tag }}" \
+            --title "Release ${{ steps.versioning.outputs.tag }}" \
+            --generate-notes

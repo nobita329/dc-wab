@@ -1,0 +1,18 @@
+{
+  "name": "nova-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "run": "bash run.sh",
+    "createuser": "npm run --prefix d createuser",
+    "migration": "npm run --prefix d migration",
+    "build": "npm run --prefix d build",
+    "dev": "npm run --prefix d dev",
+    "start": "npm run --prefix d start",
+    "pm2:start": "npm run --prefix d pm2:start",
+    "pm2:stop": "npm run --prefix d pm2:stop",
+    "pm2:restart": "npm run --prefix d pm2:restart",
+    "pm2:status": "npm run --prefix d pm2:status",
+    "pm2:logs": "npm run --prefix d pm2:logs"
+  }
+}
