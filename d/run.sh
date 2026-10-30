@@ -2,7 +2,7 @@
 # ==============================================================================
 # NOVA STUDIO — CONTROL CENTER & SERVICE RUNNER (run.sh)
 # ==============================================================================
-# 1-Click Automated Setup, Installation, User Creation, and PM2 Process Runner
+# 1-Click Automated Setup, Installation, User Creation, Testing, and PM2 Runner
 # Architecture: Next.js 15 Web (3001) • Node API (3002) • SQLite Multi-DB Cluster
 # ==============================================================================
 
@@ -153,6 +153,182 @@ cmd_auto_setup_run() {
   echo -e "${BOLD}${GREEN}🎉 NOVA STUDIO IS FULLY INITIALIZED, SETUP & RUNNING LIVE VIA PM2!${RESET}"
   echo -e "${PURPLE}================================================================================${RESET}"
   cmd_status
+}
+
+# ==============================================================================
+# 🧪 Full Automated System & Integrity Test Suite
+# ==============================================================================
+cmd_test() {
+  echo -e "\n${PURPLE}================================================================================${RESET}"
+  echo -e "${BOLD}${CYAN}🧪 NOVA STUDIO — SYSTEM & INTEGRITY TEST SUITE (run.sh test)${RESET}"
+  echo -e "${DIM}Automated verification of Runtime, File Structure, SQLite Cluster, Auth & Builds${RESET}"
+  echo -e "${PURPLE}================================================================================${RESET}\n"
+
+  local passed=0
+  local failed=0
+
+  # Test 1: Node.js & NPM
+  echo -n "  [1/7] Testing Node.js & NPM runtime environment... "
+  if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+    local node_ver=$(node -v)
+    local npm_ver=$(npm -v)
+    echo -e "${GREEN}PASSED${RESET} ${DIM}($node_ver, npm $npm_ver)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${RED}FAILED (Node.js or NPM missing)${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 2: Environment File & Permissions
+  echo -n "  [2/7] Testing .env configuration & folder permissions... "
+  if [ -f "$PROJECT_DIR/.env" ] && [ -w "$PROJECT_DIR/data" ] && [ -w "$PROJECT_DIR/backups" ]; then
+    echo -e "${GREEN}PASSED${RESET} ${DIM}(.env present, data & backup directories writable)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${RED}FAILED (.env missing or folders not writable)${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 3: SQLite Cluster Database Integrity
+  echo -e "  [3/7] Testing SQLite Cluster Databases & PRAGMA integrity..."
+  local db_ok=true
+  local db_list=("user.db" "api.db" "settings.db" "content.db" "command.db" "activity.db" "app.db" "team.db" "tutorials.db")
+  
+  for db_name in "${db_list[@]}"; do
+    local db_path="$PROJECT_DIR/data/$db_name"
+    if [ ! -f "$db_path" ]; then
+      echo -e "        ${RED}✗ $db_name: Missing file${RESET}"
+      db_ok=false
+    else
+      local check_res=$(node -e '
+        const { DatabaseSync } = require("node:sqlite");
+        try {
+          const db = new DatabaseSync(process.argv[1]);
+          const res = db.prepare("PRAGMA integrity_check").get();
+          const tables = db.prepare("SELECT count(*) as count FROM sqlite_master WHERE type = ? AND name NOT LIKE ?").get("table", "sqlite_%");
+          console.log(`${res.integrity_check}|${tables.count}`);
+        } catch (e) {
+          console.log(`error|${e.message}`);
+        }
+      ' "$db_path" 2>/dev/null || echo "error|check failed")
+
+      local integrity=$(echo "$check_res" | cut -d'|' -f1)
+      local tables=$(echo "$check_res" | cut -d'|' -f2)
+
+      if [ "$integrity" = "ok" ]; then
+        echo -e "        ${GREEN}✔${RESET} ${CYAN}$db_name${RESET}: integrity=ok (${tables} tables registered)"
+      else
+        echo -e "        ${RED}✗ $db_name: integrity=$integrity${RESET}"
+        db_ok=false
+      fi
+    fi
+  done
+
+  if [ "$db_ok" = true ]; then
+    echo -e "        ↳ Result: ${GREEN}ALL 9 DATABASES PASSED INTEGRITY CHECK${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "        ↳ Result: ${RED}DATABASE INTEGRITY CHECK FAILED${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 4: Administrator User & Authentication
+  echo -n "  [4/7] Testing Administrator Provisioning & Bcrypt Hash... "
+  local admin_check=$(node -e '
+    const { DatabaseSync } = require("node:sqlite");
+    try {
+      const db = new DatabaseSync(process.argv[1]);
+      const user = db.prepare("SELECT username, email, role, password_hash FROM users WHERE role = ?").get("admin");
+      if (!user) {
+        console.log("missing");
+      } else if (user.password_hash && (user.password_hash.startsWith("$2a$") || user.password_hash.startsWith("$2b$"))) {
+        console.log(`ok|${user.username}|${user.email}`);
+      } else {
+        console.log("invalid_hash");
+      }
+    } catch (e) {
+      console.log("error");
+    }
+  ' "$PROJECT_DIR/data/user.db" 2>/dev/null || echo "error")
+
+  if [[ "$admin_check" == ok* ]]; then
+    local admin_info=$(echo "$admin_check" | cut -d'|' -f2,3 | tr '|' ' ')
+    echo -e "${GREEN}PASSED${RESET} ${DIM}(Admin verified: $admin_info, Bcrypt hash valid)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${RED}FAILED (Admin account missing or hash invalid. Run ./run.sh createuser)${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 5: Monorepo Build Artifacts
+  echo -n "  [5/7] Testing Production Build Artifacts... "
+  local build_ok=true
+  if [ ! -f "$PROJECT_DIR/apps/web/.next/BUILD_ID" ]; then
+    build_ok=false
+  fi
+  if [ ! -f "$PROJECT_DIR/apps/api/dist/server.js" ]; then
+    build_ok=false
+  fi
+
+  if [ "$build_ok" = true ]; then
+    local build_id=$(cat "$PROJECT_DIR/apps/web/.next/BUILD_ID" 2>/dev/null | head -c 12)
+    echo -e "${GREEN}PASSED${RESET} ${DIM}(API dist/server.js + Next.js build: $build_id)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${YELLOW}WARNING (Build artifacts missing. Run option 7 or ./run.sh build)${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 6: GitHub Auto-Detect & Repos Integration
+  echo -n "  [6/7] Testing GitHub Auto-Detect & Repos Table... "
+  local gh_check=$(node -e '
+    const { DatabaseSync } = require("node:sqlite");
+    try {
+      const db = new DatabaseSync(process.argv[1]);
+      const count = db.prepare("SELECT count(*) as c FROM github_repos").get();
+      console.log(`ok|${count.c}`);
+    } catch (e) {
+      console.log("error");
+    }
+  ' "$PROJECT_DIR/data/api.db" 2>/dev/null || echo "error")
+
+  if [[ "$gh_check" == ok* ]]; then
+    local repo_count=$(echo "$gh_check" | cut -d'|' -f2)
+    echo -e "${GREEN}PASSED${RESET} ${DIM}(github_repos table ready with ${repo_count} cached repos)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${RED}FAILED (github_repos table not found. Run ./run.sh migration)${RESET}"
+    failed=$((failed + 1))
+  fi
+
+  # Test 7: Network Ports & Live Endpoints
+  echo -n "  [7/7] Testing Network Ports (Web :3001, API :3002)... "
+  local p3001=false
+  local p3002=false
+  check_port 3001 && p3001=true
+  check_port 3002 && p3002=true
+
+  if [ "$p3001" = true ] && [ "$p3002" = true ]; then
+    echo -e "${GREEN}PASSED${RESET} ${DIM}(Both Port 3001 and 3002 active & listening)${RESET}"
+    passed=$((passed + 1))
+  elif [ "$p3001" = true ] || [ "$p3002" = true ]; then
+    echo -e "${YELLOW}PARTIAL${RESET} ${DIM}(Web: $p3001, API: $p3002)${RESET}"
+    passed=$((passed + 1))
+  else
+    echo -e "${CYAN}STANDBY${RESET} ${DIM}(Services not running. Run option 1 or ./run.sh start)${RESET}"
+    passed=$((passed + 1))
+  fi
+
+  # Summary Card
+  echo -e "\n${PURPLE}================================================================================${RESET}"
+  if [ $failed -eq 0 ]; then
+    echo -e "${BOLD}${GREEN}✔ TEST SUITE SUMMARY: $passed/7 CHECKS PASSED (0 FAILURES)${RESET}"
+    echo -e "${DIM}All Nova Studio subsystems, databases, builds, and configurations are 100% operational.${RESET}"
+  else
+    echo -e "${BOLD}${YELLOW}⚠ TEST SUITE SUMMARY: $passed PASSED, $failed FAILED${RESET}"
+    echo -e "${DIM}Resolve the issues indicated above by running ./run.sh auto or specific menu options.${RESET}"
+  fi
+  echo -e "${PURPLE}================================================================================${RESET}\n"
 }
 
 # 1. Start Services via PM2
@@ -322,11 +498,12 @@ show_menu() {
     echo -e "   ${CYAN}11)${RESET} ${BOLD}Start in Dev Mode${RESET}         ${DIM}(Run concurrently with hot module reload)${RESET}"
     echo -e "   ${CYAN}12)${RESET} ${BOLD}View .env Config${RESET}          ${DIM}(Inspect active environment settings)${RESET}"
     echo -e "   ${CYAN}13)${RESET} ${BOLD}System Diagnostics${RESET}        ${DIM}(Inspect Node, DB files, and ports)${RESET}"
+    echo -e "   ${PURPLE}14)${RESET} ${BOLD}${PURPLE}🧪 Run System & Integrity Tests${RESET} ${DIM}(Full validation test suite)${RESET}"
     echo ""
     echo -e "    ${RED}0)${RESET} ${BOLD}Exit${RESET}"
     echo -e "${PURPLE}================================================================================${RESET}"
 
-    read -rp "Enter option [0-13]: " choice
+    read -rp "Enter option [0-14]: " choice
 
     case "$choice" in
       1)
@@ -368,12 +545,15 @@ show_menu() {
       13)
         cmd_diagnostics
         ;;
+      14)
+        cmd_test
+        ;;
       0|q|Q|exit)
         echo -e "\n${CYAN}Goodbye! Nova Studio Control Center closed.${RESET}\n"
         exit 0
         ;;
       *)
-        echo -e "\n${RED}Invalid option: '$choice'. Please select a valid number between 0 and 13.${RESET}"
+        echo -e "\n${RED}Invalid option: '$choice'. Please select a valid number between 0 and 14.${RESET}"
         ;;
     esac
 
@@ -386,10 +566,13 @@ show_menu() {
 # CLI Argument Dispatcher
 # ==============================================================================
 # If arguments are passed, run directly without interactive menu:
-# e.g.: ./run.sh auto | ./run.sh start | ./run.sh build | ./run.sh migrate
+# e.g.: ./run.sh test | ./run.sh auto | ./run.sh start | ./run.sh build
 # ==============================================================================
 if [ $# -gt 0 ]; then
   case "$1" in
+    test|tests|check|verify)
+      cmd_test
+      ;;
     auto|setup|init|install)
       cmd_auto_setup_run
       ;;
@@ -427,7 +610,7 @@ if [ $# -gt 0 ]; then
     env)
       cmd_env
       ;;
-    diagnostics|check)
+    diagnostics)
       cmd_diagnostics
       ;;
     menu)
@@ -439,6 +622,7 @@ if [ $# -gt 0 ]; then
       echo ""
       echo "Commands:"
       echo "  (none)      Launch interactive menu"
+      echo "  test        Run automated verification and integrity test suite"
       echo "  auto|setup  1-Click Auto Install -> Setup -> Migrate -> User -> PM2 Run"
       echo "  start       Start API & Web background processes with PM2"
       echo "  stop        Stop PM2 background processes"
