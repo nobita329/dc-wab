@@ -80,3 +80,4 @@ jobs:
           gh release create "${{ steps.versioning.outputs.tag }}" \
             --title "Nova Studio Release ${{ steps.versioning.outputs.tag }}" \
             --generate-notes
+
